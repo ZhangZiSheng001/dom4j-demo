@@ -17,12 +17,14 @@ public class XMLParserTest {
 	public void test01() {
 		XMLParser xmlParser = new XMLParser("members.xml");
 		Element root = xmlParser.getRoot();
+		System.out.println("-------第一种遍历方式：Iterator+递归--------");
 		xmlParser.list1(root);
-		System.out.println("---------------");
+		System.out.println("-------第二种遍历方式：node(i)+递归--------");
 		xmlParser.list2(root);
-		System.out.println("---------------");
+		System.out.println("-------第三种遍历方式：VisitorSupport--------");
 		xmlParser.list3(root, "student");
-
+		System.out.println("-------第四种遍历方式：XPath方式查找节点--------");
+		xmlParser.list4("student");
 	}
 
 }

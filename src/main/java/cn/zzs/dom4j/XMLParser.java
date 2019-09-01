@@ -1,8 +1,8 @@
 package cn.zzs.dom4j;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -37,21 +37,19 @@ public class XMLParser {
 	 * @return: void
 	 */
 	public void list1(Element parent) {
-		if(parent==null) {
+		if(parent == null) {
 			return;
-		}
-		// 先输出当前节点名称
-		//System.out.println(parent.getName());
-		//遍历当前节点属性并输出
-		Iterator<Attribute> iterator1 = parent.attributeIterator();
-		while (iterator1.hasNext()) {
-			Attribute attribute = (Attribute) iterator1.next();
-			System.out.println(attribute.getName() + "=" + attribute.getText());
 		}
 		//获取当前节点Text并输出
 		String text = parent.getTextTrim();
 		if (text != null && !"".equals(text)) {
 			System.out.println(text);
+		}
+		//遍历当前节点属性并输出
+		Iterator<Attribute> iterator1 = parent.attributeIterator();
+		while (iterator1.hasNext()) {
+			Attribute attribute = iterator1.next();
+			System.out.println(attribute.getName() + "=" + attribute.getText());
 		}
 		//递归打印子节点
 		Iterator<Element> iterator2 = parent.elementIterator();
@@ -70,13 +68,8 @@ public class XMLParser {
 	 * @return: void
 	 */
 	public void list2(Element parent) {
-		if(parent==null) {
+		if(parent == null) {
 			return;
-		}
-		//先输出当前节点
-		String name = parent.getName().trim();
-		if (name != null && !"".equals(name)) {
-			System.out.println(name);
 		}
 		//遍历节点中的Node
 		for (int i = 0, size = parent.nodeCount(); i < size; i++) {
@@ -85,17 +78,26 @@ public class XMLParser {
 			//获得node的类型
 			int nodeType = node.getNodeType();
 			switch (nodeType) {
-			case Node.ELEMENT_NODE:
-				list2((Element) node); //如果是Element类型，递归
-				break;
-			case Node.ATTRIBUTE_NODE://这种方式不能遍历Attribute
-				System.out.println(node.getName() + "：" + node.getText());
-				break;
+			//如果是Text类型
 			case Node.TEXT_NODE:
-				if (node != null && !"".equals(node.getText())) {
+				if (node != null && !"".equals(node.getText().trim())) {
 					System.out.println(node.getText());
 				}
 				break;
+			//如果是Element类型
+			case Node.ELEMENT_NODE:
+				//遍历当前节点属性并输出
+				Iterator<Attribute> iterator1 = ((Element)node).attributeIterator();
+				while (iterator1.hasNext()) {
+					Attribute attribute = iterator1.next();
+					System.out.println(attribute.getName() + "=" + attribute.getText());
+				}
+				//递归
+				list2((Element) node); 
+				break;
+			//case Node.ATTRIBUTE_NODE://这种方式不能遍历Attribute
+				//System.out.println(node.getName() + "：" + node.getText());
+				//break;
 			default:
 				System.out.println("其他类型" + node);
 				break;
@@ -113,13 +115,13 @@ public class XMLParser {
 	 * @return: void
 	 */
 	public void list3(Element root,String elementName) {
-		if(root==null) {
+		if(root == null) {
 			return;
 		}
 		root.accept(new VisitorSupport() {
 			public void visit(Element element) {
 				if (elementName.equals(element.getName())) {
-					System.out.print(element.getTextTrim() + ":");
+					System.out.println(element.getTextTrim() + ":");
 				}
 			}
 
@@ -132,6 +134,41 @@ public class XMLParser {
 		});
 	}
 
+	/**
+	 * 
+	 * @Title: list4
+	 * @Description: 第四种遍历节点的方法：使用XPath方式来指定节点
+	 * @author: zzs
+	 * @date: 2019年9月1日 上午9:10:01
+	 * @return: void
+	 */
+	public void list4(String elementName) {
+		if(elementName == null) {
+			return;
+		}
+		//获得根节点下的所有符合指定节点名的节点
+		List<Node> list = document.selectNodes("//"+elementName.trim());
+		//遍历节点
+		Iterator<Node> iterator = list.iterator();
+	    while (iterator.hasNext()) {
+	    	Node node = (Node)iterator.next();
+	    	//打印Text
+	    	String text = node.getText().trim();
+	    	if(!"".equals(text)) {
+	    		System.out.println(text+":");
+	    	}
+	    	//打印Attribute
+	    	if(node.getNodeType() == Node.ELEMENT_NODE) {
+	    		Iterator<Attribute> iterator1 = ((Element)node).attributeIterator();
+	    		while (iterator1.hasNext()) {
+	    			Attribute attribute = iterator1.next();
+	    			System.out.println(attribute.getName() + "=" + attribute.getText());
+	    		}
+	    	}
+	    }	 
+	}
+
+	
 	/**
 	 * 
 	 * @Title: init

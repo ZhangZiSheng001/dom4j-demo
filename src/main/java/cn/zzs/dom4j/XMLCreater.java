@@ -69,6 +69,7 @@ public class XMLCreater {
 			out = new FileWriter(file);
 			//包装out,获得XMLWriter
 			writer = new XMLWriter(out, createFormat());
+			//输出xml文件
 			writer.write(document);
 		} catch (Exception e) {
 			System.err.println("输出XML文件失败");
