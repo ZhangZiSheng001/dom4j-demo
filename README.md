@@ -6,7 +6,7 @@ Dom4j用于创建和解析XML文件，采用了Java集合框架并完全支持`D
 节点的获取和操作都是从`Document`对象开始，里面包含了根节点，即指向了这棵树。一般利用`SAXReader`的`read`方法解析XML文件获得`Document`对象。利用`Document`这个对象就可以获得指定元素的属性和值了。另外，通过Xpath可以高效地获得指定节点。  
 注意，使用Xpath需要引入jaxen的包。  
 这里再说下dom4j比较重要的节点结构，从图中可看出，这是非常巧妙的设计：
-![dom4j的节点结构图](https://github.com/ZhangZiSheng001/Dom4j-demo/img/dom4j-node.cld.jpg)
+![dom4j的节点结构图](https://github.com/ZhangZiSheng001/Dom4j-demo/blob/master/img/dom4j-node.cld.jpg)
 
 ## 使用例子
 ### 需求
