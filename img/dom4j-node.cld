@@ -40,8 +40,8 @@
       <constraint>
         <height>-1</height>
         <width>-1</width>
-        <x>488</x>
-        <y>445</y>
+        <x>491</x>
+        <y>473</y>
       </constraint>
       <sourceConnections/>
       <targetConnections>
@@ -524,7 +524,7 @@
               </org.eclipse.ui.views.properties.PropertyDescriptor>
             </propertyDescriptors>
             <stereoType></stereoType>
-            <name>org.dom4j.Attribute</name>
+            <name>Attribute</name>
           </source>
           <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
           <bendpoints/>
@@ -557,7 +557,7 @@
             <constraint>
               <height>-1</height>
               <width>-1</width>
-              <x>352</x>
+              <x>400</x>
               <y>301</y>
             </constraint>
             <sourceConnections>
@@ -727,8 +727,8 @@
                   <constraint>
                     <height>-1</height>
                     <width>-1</width>
-                    <x>180</x>
-                    <y>239</y>
+                    <x>261</x>
+                    <y>216</y>
                   </constraint>
                   <sourceConnections>
                     <net.java.amateras.uml.classdiagram.model.GeneralizationModel reference="../../.."/>
@@ -871,7 +871,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>getRootElement</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params/>
                       <isAbstract>true</isAbstract>
                       <isStatic>false</isStatic>
@@ -896,7 +896,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>rootElement</name>
-                          <type>org.dom4j.Element</type>
+                          <type>Element</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -918,7 +918,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addComment</name>
-                      <type>org.dom4j.Document</type>
+                      <type>Document</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>comment</name>
@@ -944,7 +944,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addProcessingInstruction</name>
-                      <type>org.dom4j.Document</type>
+                      <type>Document</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>target</name>
@@ -974,7 +974,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addProcessingInstruction</name>
-                      <type>org.dom4j.Document</type>
+                      <type>Document</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>target</name>
@@ -1004,7 +1004,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addDocType</name>
-                      <type>org.dom4j.Document</type>
+                      <type>Document</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>name</name>
@@ -1038,7 +1038,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>getDocType</name>
-                      <type>org.dom4j.DocumentType</type>
+                      <type>DocumentType</type>
                       <params/>
                       <isAbstract>true</isAbstract>
                       <isStatic>false</isStatic>
@@ -1063,7 +1063,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>docType</name>
-                          <type>org.dom4j.DocumentType</type>
+                          <type>DocumentType</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -1231,7 +1231,7 @@
                     </org.eclipse.ui.views.properties.PropertyDescriptor>
                   </propertyDescriptors>
                   <stereoType></stereoType>
-                  <name>org.dom4j.Document</name>
+                  <name>Document</name>
                 </source>
                 <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
                 <bendpoints/>
@@ -1264,8 +1264,8 @@
                   <constraint>
                     <height>-1</height>
                     <width>-1</width>
-                    <x>330</x>
-                    <y>184</y>
+                    <x>425</x>
+                    <y>183</y>
                   </constraint>
                   <sourceConnections>
                     <net.java.amateras.uml.classdiagram.model.GeneralizationModel reference="../../.."/>
@@ -1670,7 +1670,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addAttribute</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>name</name>
@@ -1700,7 +1700,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addAttribute</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>qName</name>
@@ -1730,7 +1730,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addComment</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>comment</name>
@@ -1756,7 +1756,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addCDATA</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>cdata</name>
@@ -1782,7 +1782,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addEntity</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>name</name>
@@ -1812,7 +1812,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addNamespace</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>prefix</name>
@@ -1842,7 +1842,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addProcessingInstruction</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>target</name>
@@ -1872,7 +1872,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addProcessingInstruction</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>target</name>
@@ -1902,7 +1902,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>addText</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>text</name>
@@ -1932,7 +1932,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>attribute</name>
-                          <type>org.dom4j.Attribute</type>
+                          <type>Attribute</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -1958,7 +1958,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>cdata</name>
-                          <type>org.dom4j.CDATA</type>
+                          <type>CDATA</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -1984,7 +1984,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>entity</name>
-                          <type>org.dom4j.Entity</type>
+                          <type>Entity</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -2010,7 +2010,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>text</name>
-                          <type>org.dom4j.Text</type>
+                          <type>Text</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -2062,7 +2062,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>attribute</name>
-                          <type>org.dom4j.Attribute</type>
+                          <type>Attribute</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -2088,7 +2088,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>cdata</name>
-                          <type>org.dom4j.CDATA</type>
+                          <type>CDATA</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -2114,7 +2114,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>entity</name>
-                          <type>org.dom4j.Entity</type>
+                          <type>Entity</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -2166,7 +2166,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>text</name>
-                          <type>org.dom4j.Text</type>
+                          <type>Text</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -2387,7 +2387,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>attribute</name>
-                      <type>org.dom4j.Attribute</type>
+                      <type>Attribute</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>index</name>
@@ -2413,7 +2413,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>attribute</name>
-                      <type>org.dom4j.Attribute</type>
+                      <type>Attribute</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>name</name>
@@ -2439,7 +2439,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>attribute</name>
-                      <type>org.dom4j.Attribute</type>
+                      <type>Attribute</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>qName</name>
@@ -2637,7 +2637,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>element</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>name</name>
@@ -2663,7 +2663,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>element</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>qName</name>
@@ -2902,7 +2902,7 @@
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>element</name>
-                          <type>org.dom4j.Element</type>
+                          <type>Element</type>
                         </net.java.amateras.uml.classdiagram.model.Argument>
                       </params>
                       <isAbstract>true</isAbstract>
@@ -2924,7 +2924,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>createCopy</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params/>
                       <isAbstract>true</isAbstract>
                       <isStatic>false</isStatic>
@@ -2945,7 +2945,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>createCopy</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>name</name>
@@ -2971,7 +2971,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>createCopy</name>
-                      <type>org.dom4j.Element</type>
+                      <type>Element</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>qName</name>
@@ -3101,7 +3101,7 @@
                       </listeners>
                       <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                       <name>getXPathResult</name>
-                      <type>org.dom4j.Node</type>
+                      <type>Node</type>
                       <params>
                         <net.java.amateras.uml.classdiagram.model.Argument>
                           <name>index</name>
@@ -3179,7 +3179,7 @@
                     </org.eclipse.ui.views.properties.PropertyDescriptor>
                   </propertyDescriptors>
                   <stereoType></stereoType>
-                  <name>org.dom4j.Element</name>
+                  <name>Element</name>
                 </source>
                 <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
                 <bendpoints/>
@@ -3217,7 +3217,7 @@
                 </listeners>
                 <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                 <name>node</name>
-                <type>org.dom4j.Node</type>
+                <type>Node</type>
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>index</name>
@@ -3247,7 +3247,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>node</name>
-                    <type>org.dom4j.Node</type>
+                    <type>Node</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3290,7 +3290,7 @@
                 </listeners>
                 <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                 <name>elementByID</name>
-                <type>org.dom4j.Element</type>
+                <type>Element</type>
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>elementID</name>
@@ -3388,7 +3388,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>branch</name>
-                    <type>org.dom4j.Branch</type>
+                    <type>Branch</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3478,7 +3478,7 @@
                 </listeners>
                 <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                 <name>processingInstruction</name>
-                <type>org.dom4j.ProcessingInstruction</type>
+                <type>ProcessingInstruction</type>
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>target</name>
@@ -3530,7 +3530,7 @@
                 </listeners>
                 <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                 <name>addElement</name>
-                <type>org.dom4j.Element</type>
+                <type>Element</type>
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>name</name>
@@ -3556,7 +3556,7 @@
                 </listeners>
                 <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                 <name>addElement</name>
-                <type>org.dom4j.Element</type>
+                <type>Element</type>
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>qname</name>
@@ -3582,7 +3582,7 @@
                 </listeners>
                 <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../../../net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
                 <name>addElement</name>
-                <type>org.dom4j.Element</type>
+                <type>Element</type>
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>qualifiedName</name>
@@ -3642,7 +3642,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>node</name>
-                    <type>org.dom4j.Node</type>
+                    <type>Node</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3668,7 +3668,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>comment</name>
-                    <type>org.dom4j.Comment</type>
+                    <type>Comment</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3694,7 +3694,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>element</name>
-                    <type>org.dom4j.Element</type>
+                    <type>Element</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3720,7 +3720,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>pi</name>
-                    <type>org.dom4j.ProcessingInstruction</type>
+                    <type>ProcessingInstruction</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3746,7 +3746,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>node</name>
-                    <type>org.dom4j.Node</type>
+                    <type>Node</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3772,7 +3772,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>comment</name>
-                    <type>org.dom4j.Comment</type>
+                    <type>Comment</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3798,7 +3798,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>element</name>
-                    <type>org.dom4j.Element</type>
+                    <type>Element</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3824,7 +3824,7 @@
                 <params>
                   <net.java.amateras.uml.classdiagram.model.Argument>
                     <name>pi</name>
-                    <type>org.dom4j.ProcessingInstruction</type>
+                    <type>ProcessingInstruction</type>
                   </net.java.amateras.uml.classdiagram.model.Argument>
                 </params>
                 <isAbstract>true</isAbstract>
@@ -3919,7 +3919,7 @@
               </org.eclipse.ui.views.properties.PropertyDescriptor>
             </propertyDescriptors>
             <stereoType></stereoType>
-            <name>org.dom4j.Branch</name>
+            <name>Branch</name>
           </source>
           <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
           <bendpoints/>
@@ -4082,8 +4082,8 @@
                   <constraint>
                     <height>-1</height>
                     <width>-1</width>
-                    <x>505</x>
-                    <y>188</y>
+                    <x>553</x>
+                    <y>185</y>
                   </constraint>
                   <sourceConnections>
                     <net.java.amateras.uml.classdiagram.model.GeneralizationModel reference="../../.."/>
@@ -4232,7 +4232,7 @@
                     </org.eclipse.ui.views.properties.PropertyDescriptor>
                   </propertyDescriptors>
                   <stereoType></stereoType>
-                  <name>org.dom4j.CDATA</name>
+                  <name>CDATA</name>
                 </source>
                 <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
                 <bendpoints/>
@@ -4400,7 +4400,7 @@
                     </org.eclipse.ui.views.properties.PropertyDescriptor>
                   </propertyDescriptors>
                   <stereoType></stereoType>
-                  <name>org.dom4j.Comment</name>
+                  <name>Comment</name>
                 </source>
                 <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
                 <bendpoints/>
@@ -4554,7 +4554,7 @@
                     </org.eclipse.ui.views.properties.PropertyDescriptor>
                   </propertyDescriptors>
                   <stereoType></stereoType>
-                  <name>org.dom4j.Text</name>
+                  <name>Text</name>
                 </source>
                 <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
                 <bendpoints/>
@@ -4666,7 +4666,7 @@
               </org.eclipse.ui.views.properties.PropertyDescriptor>
             </propertyDescriptors>
             <stereoType></stereoType>
-            <name>org.dom4j.CharacterData</name>
+            <name>CharacterData</name>
           </source>
           <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
           <bendpoints/>
@@ -5051,7 +5051,7 @@
               </org.eclipse.ui.views.properties.PropertyDescriptor>
             </propertyDescriptors>
             <stereoType></stereoType>
-            <name>org.dom4j.DocumentType</name>
+            <name>DocumentType</name>
           </source>
           <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
           <bendpoints/>
@@ -5177,7 +5177,7 @@
               </org.eclipse.ui.views.properties.PropertyDescriptor>
             </propertyDescriptors>
             <stereoType></stereoType>
-            <name>org.dom4j.Entity</name>
+            <name>Entity</name>
           </source>
           <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
           <bendpoints/>
@@ -5487,7 +5487,7 @@
               </org.eclipse.ui.views.properties.PropertyDescriptor>
             </propertyDescriptors>
             <stereoType></stereoType>
-            <name>org.dom4j.ProcessingInstruction</name>
+            <name>ProcessingInstruction</name>
           </source>
           <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
           <bendpoints/>
@@ -5783,7 +5783,7 @@
           </listeners>
           <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
           <name>getParent</name>
-          <type>org.dom4j.Element</type>
+          <type>Element</type>
           <params/>
           <isAbstract>true</isAbstract>
           <isStatic>false</isStatic>
@@ -5808,7 +5808,7 @@
           <params>
             <net.java.amateras.uml.classdiagram.model.Argument>
               <name>parent</name>
-              <type>org.dom4j.Element</type>
+              <type>Element</type>
             </net.java.amateras.uml.classdiagram.model.Argument>
           </params>
           <isAbstract>true</isAbstract>
@@ -5830,7 +5830,7 @@
           </listeners>
           <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
           <name>getDocument</name>
-          <type>org.dom4j.Document</type>
+          <type>Document</type>
           <params/>
           <isAbstract>true</isAbstract>
           <isStatic>false</isStatic>
@@ -5855,7 +5855,7 @@
           <params>
             <net.java.amateras.uml.classdiagram.model.Argument>
               <name>document</name>
-              <type>org.dom4j.Document</type>
+              <type>Document</type>
             </net.java.amateras.uml.classdiagram.model.Argument>
           </params>
           <isAbstract>true</isAbstract>
@@ -6059,7 +6059,7 @@
           <params>
             <net.java.amateras.uml.classdiagram.model.Argument>
               <name>context</name>
-              <type>org.dom4j.Element</type>
+              <type>Element</type>
             </net.java.amateras.uml.classdiagram.model.Argument>
           </params>
           <isAbstract>true</isAbstract>
@@ -6106,7 +6106,7 @@
           <params>
             <net.java.amateras.uml.classdiagram.model.Argument>
               <name>context</name>
-              <type>org.dom4j.Element</type>
+              <type>Element</type>
             </net.java.amateras.uml.classdiagram.model.Argument>
           </params>
           <isAbstract>true</isAbstract>
@@ -6217,7 +6217,7 @@
           </listeners>
           <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
           <name>detach</name>
-          <type>org.dom4j.Node</type>
+          <type>Node</type>
           <params/>
           <isAbstract>true</isAbstract>
           <isStatic>false</isStatic>
@@ -6354,7 +6354,7 @@
           </listeners>
           <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
           <name>selectSingleNode</name>
-          <type>org.dom4j.Node</type>
+          <type>Node</type>
           <params>
             <net.java.amateras.uml.classdiagram.model.Argument>
               <name>xpathExpression</name>
@@ -6484,11 +6484,11 @@
           </listeners>
           <visibility class="net.java.amateras.uml.classdiagram.model.Visibility$1" reference="../../../targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/children/net.java.amateras.uml.classdiagram.model.OperationModel/visibility"/>
           <name>asXPathResult</name>
-          <type>org.dom4j.Node</type>
+          <type>Node</type>
           <params>
             <net.java.amateras.uml.classdiagram.model.Argument>
               <name>parent</name>
-              <type>org.dom4j.Element</type>
+              <type>Element</type>
             </net.java.amateras.uml.classdiagram.model.Argument>
           </params>
           <isAbstract>true</isAbstract>
@@ -6609,7 +6609,7 @@
         </org.eclipse.ui.views.properties.PropertyDescriptor>
       </propertyDescriptors>
       <stereoType></stereoType>
-      <name>org.dom4j.Node</name>
+      <name>Node</name>
     </net.java.amateras.uml.classdiagram.model.InterfaceModel>
     <net.java.amateras.uml.classdiagram.model.InterfaceModel reference="../net.java.amateras.uml.classdiagram.model.InterfaceModel/targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/source"/>
     <net.java.amateras.uml.classdiagram.model.InterfaceModel reference="../net.java.amateras.uml.classdiagram.model.InterfaceModel/targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel[2]/source"/>

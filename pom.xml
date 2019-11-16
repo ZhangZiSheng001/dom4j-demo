@@ -28,5 +28,11 @@
 			<artifactId>jaxen</artifactId>
 			<version>1.1.6</version>
 		</dependency>
+		<!-- 配置BeanUtils的包 -->
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		    <version>1.9.3</version>
+		</dependency>
 	</dependencies>
 </project>

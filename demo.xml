@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE student [
+    <!ELEMENT student (name,age,address,desc)>
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT age (#PCDATA)>
+    <!ELEMENT address (#PCDATA)>
+    <!ELEMENT desc (#PCDATA)>
+    <!ENTITY myName "张三">
+ ]>
+<!-- 学生节点 -->
+<students>
+	<student >
+        <name>&myName;</name>
+        <age>18</age>
+        <address>河南</address>
+        <desc><![CDATA[<a href="#"></a>]]></desc>
+	</student>
+</students>
