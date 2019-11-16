@@ -1,10 +1,34 @@
+# 目录
+
+* [简介](#简介)
+* [使用例子](#使用例子)
+  * [需求](#需求)
+  * [工程环境](#工程环境)
+  * [主要步骤](#主要步骤)
+    * [生成xml文件](#生成xml文件)
+    * [解析xml文件](#解析xml文件)
+  * [创建项目](#创建项目)
+  * [引入依赖](#引入依赖)
+  * [生成xml文件](#生成xml文件-1)
+    * [编写XMLCreater](#编写xmlcreater)
+    * [编写XMLCreaterTest](#编写xmlcreatertest)
+    * [测试结果](#测试结果)
+  * [解析xml文件](#解析xml文件-1)
+    * [编写XMLParser](#编写xmlparser)
+    * [测试遍历节点](#测试遍历节点)
+    * [测试XPath获取指定节点](#测试xpath获取指定节点)
+  * [XPath语法](#xpath语法)
+* [源码分析](#源码分析)
+  * [dom4j节点的类结构](#dom4j节点的类结构)
+
+
 
 # 简介  
 dom4j用于创建和解析XML文件，本质上是将xml的节点看成一棵多叉树。  
 
 针对xml元素的结构，dom4j设计非常巧妙，如下：  
 
-![dom4j的节点结构图](https://github.com/ZhangZiSheng001/Dom4j-demo/blob/master/img/dom4j-node.cld.jpg)
+![dom4j的节点结构图](https://github.com/ZhangZiSheng001/Dom4j-demo/blob/master/img/dom4j_structure.png)
 
 另外，dom4j支持Xpath来获取节点。注意，使用Xpath需要引入jaxen的包。  
 
