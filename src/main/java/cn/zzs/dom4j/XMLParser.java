@@ -14,7 +14,7 @@ import org.dom4j.io.SAXReader;
 
 /**
  * @ClassName: XMLParser
- * @Description: 用于解析XML文件
+ * @Description: 解析XML文件--使用dom4j
  * @author: zzs
  * @date: 2019年9月1日 上午12:17:06
  */

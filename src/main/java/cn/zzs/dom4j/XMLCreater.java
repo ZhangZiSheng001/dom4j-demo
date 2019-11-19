@@ -17,7 +17,7 @@ import org.dom4j.io.XMLWriter;
 
 /**
  * @ClassName: XMLCreater
- * @Description: 用于创建XML文件
+ * @Description: 创建XML文件--使用dom4j
  * @author: zzs
  * @date: 2019年8月31日 下午11:38:11
  */
@@ -37,10 +37,9 @@ public class XMLCreater {
 		super();
 		init(rootName);
 	}
-	
-	//无参构造私有
-	private XMLCreater() {
-	}
+
+	// 无参构造私有
+	private XMLCreater() {}
 
 	/**
 	 * 
@@ -53,6 +52,7 @@ public class XMLCreater {
 	 * @throws Exception 
 	 */
 	public void addMember(Object obj) throws Exception {
+		// 获得对象的简单类名
 		String name = obj.getClass().getSimpleName().toLowerCase();
 		// 获取该类对象的父节点
 		Element parent = getElementByName(name);
@@ -89,6 +89,8 @@ public class XMLCreater {
 			writer = new XMLWriter(out, getFormat(useFormat));
 			// 输出xml文件
 			writer.write(document);
+		} catch(Exception ex) {
+			ex.printStackTrace();
 		} finally {
 			// 释放资源
 			if(writer != null) {
@@ -120,7 +122,7 @@ public class XMLCreater {
 	 * @param element
 	 * @param obj
 	 * @return: void
-	 * @throws Exception 
+	 * @throws Exception 对象字段解析异常
 	 */
 	private void addAttribute(Element element, Object obj) throws Exception {
 		Map<String, Object> map = PropertyUtils.describe(obj);
