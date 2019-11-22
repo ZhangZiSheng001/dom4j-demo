@@ -682,4 +682,6 @@ student:age=20,location=北京,name=王五
 以上，`dom4j`的源码分析基本已经分析完，其他具体细节后续再做补充。  
  
 参考以下资料：  
-> [浅析SAX,DOM,JAXP,JDOM与DOM4J之间的关系](https://blog.csdn.net/xiongqi215/article/details/10125281)
+[浅析SAX,DOM,JAXP,JDOM与DOM4J之间的关系](https://blog.csdn.net/xiongqi215/article/details/10125281)
+
+> 版权所有，相关源码请移步：https://github.com/ZhangZiSheng001/dom4j-demo.git
