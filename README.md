@@ -684,4 +684,4 @@ student:age=20,location=北京,name=王五
 参考以下资料：  
 [浅析SAX,DOM,JAXP,JDOM与DOM4J之间的关系](https://blog.csdn.net/xiongqi215/article/details/10125281)
 
-> 版权所有，相关源码请移步：https://github.com/ZhangZiSheng001/dom4j-demo.git
+>  本文为原创文章，转载请附上原文出处链接：https://github.com/ZhangZiSheng001/dom4j-demo
