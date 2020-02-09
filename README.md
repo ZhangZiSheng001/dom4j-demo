@@ -39,6 +39,7 @@
     * [endElement(String, String, String)](#endelementstring-string-string)
     * [endDocument()](#enddocument)
 
+
 # 简介  
 `dom4j`用于创建和解析XML文件，不是纯粹的`DOM`或`SAX`，而是两者的结合和改进，另外，`dom4j`支持`Xpath`来获取节点。目前，由于其出色的性能和易用性，目前`dom4j`已经得到广泛使用，例如`Spring`、`Hibernate`就是使用`dom4j`来解析xml配置。  
 
@@ -498,11 +499,15 @@ student:age=20,location=北京,name=王五
 ## dom4j节点的类结构
 先来看下一个完整xml的元素组成，可以看出，一个xml文件包含了`Document`、`Element`、`Comment`、`Attribute`、`DocumentType`、`Text`等等。  
 
-![xml元素组成](https://github.com/ZhangZiSheng001/Dom4j-demo/blob/master/img/xml_structure.png)
+![xml元素组成](https://img2018.cnblogs.com/blog/1731892/201911/1731892-20191123120233242-1363075546.png)
+
+
 
 `DOM`的思想就是将xml元素解析为具体对象，并构建树形数据结构。基于此，`w3c`提供了xml元素的接口规范，`dom4j`基本借用了这套规范（如下图），只是改造了接口的方法，使得我们操作时更加简便。  
 
-![dom4j的节点接口继承图](https://github.com/ZhangZiSheng001/Dom4j-demo/blob/master/img/dom4j_structure.png)
+![dom4j的节点接口继承图](https://img2018.cnblogs.com/blog/1731892/201911/1731892-20191123120357524-2028719224.png)
+
+
 
 ## SAXReader.read(File file)
 通过使用例子可知，我们解析xml文件的入口是`SAXReader`对象的`read`方法，入参可以是文件路径、url、字节流、字符流等，这里以传入文件路径为例。  
@@ -680,11 +685,10 @@ student:age=20,location=北京,name=王五
     }
 ```
 以上，`dom4j`的源码分析基本已经分析完，其他具体细节后续再做补充。  
-
-# 参考资料
-
+ 
+# 参考资料：  
 [浅析SAX,DOM,JAXP,JDOM与DOM4J之间的关系](https://blog.csdn.net/xiongqi215/article/details/10125281)
 
-> 相关源码请移步：https://github.com/ZhangZiSheng001/dom4j-demo.git
+> 相关源码请移步：https://github.com/ZhangZiSheng001/dom4j-demo
 
 > 本文为原创文章，转载请附上原文出处链接：https://www.cnblogs.com/ZhangZiSheng001/p/11917301.html
