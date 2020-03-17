@@ -1,10 +1,10 @@
 # 目录
 
 * [简介](#简介)
-* [DOM、SAX、JAXP和DOM4J](#domsaxjaxp和dom4j)
+* [认识DOM、SAX、JAXP和DOM4J](#认识domsaxjaxp和dom4j)
   * [xerces解释器](#xerces解释器)
-  * [SAX](#sax)
-  * [DOM](#dom)
+  * [SAX--事件驱动](#sax--事件驱动)
+  * [DOM--文档对象模型](#dom--文档对象模型)
   * [JAXP](#jaxp)
     * [DOM解析器](#dom解析器)
     * [获取SAX解析器](#获取sax解析器)
@@ -38,21 +38,35 @@
     * [startElement(String,String,String,Attributes)](#startelementstringstringstringattributes)
     * [endElement(String, String, String)](#endelementstring-string-string)
     * [endDocument()](#enddocument)
+* [参考资料：](#参考资料)
 
 
-# 简介  
-`dom4j`用于创建和解析XML文件，不是纯粹的`DOM`或`SAX`，而是两者的结合和改进，另外，`dom4j`支持`Xpath`来获取节点。目前，由于其出色的性能和易用性，目前`dom4j`已经得到广泛使用，例如`Spring`、`Hibernate`就是使用`dom4j`来解析xml配置。  
 
-注意，`dom4j`使用`Xpath`需要额外引入`jaxen`的包。  
+# 简介
 
-# DOM、SAX、JAXP和DOM4J
-其实，JDK已经带有可以解析xml的api，如`DOM`、`SAX`、`JAXP`，但为什么`dom4j`会更受欢迎呢？它们有什么区别呢？在学习`dom4j`之前，需要先理解下`DOM`、`SAX`等概念，因为`dom4j`就是在此基础上改进而来。  
+dom4j 采用  DOM  方式解析 xml，可以读写 xml 文件，并且支持 Xpath 来获取节点。目前，由于其出色的性能和易用性，目前 dom4j 已经得到广泛使用，例如 Spring、 Hibernate 就是使用 dom4j 来解析xml配置。
+
+注意，dom4j 使用 Xpath需要额外引入 jaxen 的包，另外，针对不需要随机访问节点的读场景，建议采用基于事件驱动的 SAX。
+
+本文将包含以下内容（篇幅较长，可根据需要选择阅读）：
+
+1. 认识 DOM、SAX、JAXP 和 DOM4j；
+2. 使用例子
+3. 源码分析
+
+# 认识DOM、SAX、JAXP和DOM4J
+
+其实，JDK已经带有可以解析xml的api，如 DOM、SAX、JAXP，但为什么 dom4j 会更受欢迎呢？它们有什么区别呢？在学习 dom4j 之前，需要先理解下 DOM、SAX 等概念，因为 dom4j 就是在此基础上改进而来。
 
 ## xerces解释器
-先介绍下`xerces`解释器，下面介绍的`SAX`、`DOM`和`JAXP`都只是接口，而`xerces`解释器就是它们的具体实现，在`com.sun.org.apache.xerces.internal`包。`xerces`被称为性能最好的解释器，除了`xerces`外，还有其他的第三方解释器，如`crimson`。 
 
-## SAX
-JDK针对解析xml提供的接口，不是具体实现，在`org.xml.sax`包。`SAX`是**基于事件处理**，解析过程中根据当前的XML元素类型，调用用户自己实现的回调方法，如：`startDocument()`;，`startElement()`。下面以例子说明，通过`SAX`解析xml并打印节点名：  
+先介绍下 xerces 解释器，下面介绍的 SAX、DOM 和 JAXP 都只是接口，而 xerces 解释器就是它们的具体实现，在`com.sun.org.apache.xerces.internal`包。xerces 被称为性能最好的解释器，除了 xerces 外，还有其他的第三方解释器，如 crimson。 
+
+## SAX--事件驱动
+
+JDK针对解析xml提供的接口，不是具体实现，在`org.xml.sax`包。SAX 是**基于事件处理**，解析过程中根据当前的XML元素类型，调用用户自己实现的回调方法，如：`startDocument()`，`startElement()`。
+
+下面以例子说明，通过 SAX 解析xml并打印节点名：
 
 ```java
 	/*这里解释下四个的接口：
@@ -83,10 +97,11 @@ JDK针对解析xml提供的接口，不是具体实现，在`org.xml.sax`包。`
 		xr.parse(new InputSource("members.xml"));
 	}
 ```
-因为`SAX`是基于事件处理的，不需要等到整个xml文件都解析完才执行我们的操作，所以效率较高。但`SAX`存在一个较大缺点，就是不能随机访问节点，因为`SAX`不会主动地去保存处理过的元素（优点就是内存占用小、效率高），如果想要保存读取的元素，开发人员先构建出一个xml树形结构，再手动往里面放入元素，非常麻烦（其实`dom4j`就是通过`SAX`来构建xml树）。  
+因为 SAX 是基于事件处理的，不需要等到整个xml文件都解析完才执行我们的操作，所以效率较高。但 SAX 存在一个较大缺点，就是**不能随机访问节点**，因为 SAX 不会主动地去保存处理过的元素（优点就是**内存占用小、效率高**），如果想要保存读取的元素，开发人员先构建出一个xml树形结构，再手动往里面放入元素，非常麻烦（本质上 dom4j 就是通过 SAX 来构建xml树）。
 
-## DOM
-JDK针对解析xml提供的接口，不是具体实现，在`org.w3c.dom`包。`DOM`采用了解析方式是一次性加载整个XML文档，在内存中形成一个树形的数据结构，开发人员可以随机地操作元素。见以下例子：  
+## DOM--文档对象模型
+
+JDK针对解析xml提供的接口，不是具体实现，在`org.w3c.dom`包。DOM 采用了解析方式是一次性加载整个XML文档，在内存中形成一个树形的数据结构，开发人员可以随机地操作元素。见以下例子：
 
 ```java
 	@SuppressWarnings("restriction")
@@ -102,16 +117,15 @@ JDK针对解析xml提供的接口，不是具体实现，在`org.w3c.dom`包。`
 		printNodeList(document.getChildNodes());		
 	}
 ```
-通过DOM解析，我们可以获取任意节点进行操作。但是，`DOM`有两个缺点：  
-1. 由于一次性加载整个XML文件到内存，当处理较大文件时，容易出现内存溢出。  
-2. 节点的操作还是比较繁琐。  
-
-以上两点，`dom4j`都进行了相应优化。  
+通过DOM解析，我们可以获取任意节点进行操作。但是，DOM 有两个缺点：
+1. 由于一次性加载整个XML文件到内存，当处理较大文件时，容易出现内存溢出。
+2. 节点的操作还是比较繁琐。
 
 ## JAXP
-封装了`SAX`、`DOM`两种接口，它并没有为JAVA解析XML提供任何新功能，只是对外提供更解耦、简便操作的API。如下：  
 
-### DOM解析器  
+封装了 SAX、DOM 两种接口，它并没有为JAVA解析XML提供任何新功能，只是对外提供更解耦、简便操作的API。如下：
+
+### DOM解析器
 ```java
 	@Test
 	public void test02() throws Exception {
@@ -139,30 +153,31 @@ JDK针对解析xml提供的接口，不是具体实现，在`org.w3c.dom`包。`
 		});
 	}
 ```
-其实，`JAXP`并没有很大程度提高DOM和SAX的易用性，更多地体现在获取解析器时实现解耦。完全没有解决`SAX`和`DOM`的缺点。   
+其实，JAXP 并没有很大程度提高 DOM 和 SAX 的易用性，更多地体现在获取解析器时实现解耦，并没有解决 SAX 和 DOM 的缺点。 
 
 ## DOM4j
-对比过`dom4j`和`JAXP`就会发现，`JAXP`本质上还是将`SAX`和`DOM`当成两套API来看待，而`dom4j`就不是，它将`SAX`和`DOM`结合在一起使用，取长补短，并对原有的api进行了改造，在使用简便性、性能、面向接口编程等方面都要优于JDK自带的`SAX`和`DOM`。  
 
-以下通过使用例子和源码分析将作出说明。  
+dom4j 本质上采用的是 DOM 方式解析 xml，也就是说它支持随机访问节点，相比 JDK 的 DOM 和 JAXP，dom4j 提供了更加简便的api（但是，考虑可移植，许多项目还是会采用 JAXP）。  以下通过使用例子和源码分析将作出说明。
 
 # 项目环境
 
 ## 工程环境
-JDK：1.8  
 
-maven：3.6.1  
+JDK：1.8
 
-IDE：sts4    
+maven：3.6.1
 
-dom4j：2.1.1  
+IDE：sts4
+
+dom4j：2.1.1
 
 ## 创建项目
 
-项目类型Maven Project，打包方式jar。  
+项目类型Maven Project，打包方式jar。
 
 ## 引入依赖
-注意：`dom4j`使用`XPath`，必须引入`jaxen`的jar包。  
+
+注意：dom4j 使用 XPath，必须引入 jaxen 的 jar 包。
 
 ```xml
 <!-- junit -->
@@ -193,10 +208,12 @@ dom4j：2.1.1
 ```
 
 # 使用例子--生成xml文件
-本例子将分别使用`dom4j`和JDK的`DOM`接口生成xml文件（使用JDK的`DOM`接口时会使用`JAXP`的API）。  
+
+本例子将分别使用 dom4j 和 JDK 的 DOM 接口生成 xml 文件（使用JDK的 DOM 接口时会使用 JAXP 的 API）。
 
 ## 需求
-构建xml树，添加节点，并生成xml文件。格式如下：  
+
+构建xml树，添加节点，并生成xml文件。格式如下： 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -214,18 +231,20 @@ dom4j：2.1.1
 </members>
 ```
 ## 生成xml文件--使用w3c的DOM接口
+
 ### 主要步骤
 
-1. 通过`JAXP`的API获得`Document`对象，这个对象可以看成xml的树；  
+1. 通过 JAXP 的API获得 Document 对象，这个对象可以看成xml的树； 
 
-2. 将对象转化为节点，并添加在`Document`这棵树上；  
+2. 将对象转化为节点，并添加在 Document 这棵树上； 
 
-3. 通过`Transformer`对象将树输出到文件中。  
+3. 通过 Transformer 对象将树输出到文件中。 
 
 ### 编写测试类
-路径：test目录下的`cn.zzs.dom4j`。  
 
-注意：因为使用的是`w3c`的`DOM`接口，所以节点对象导的是`org.w3c.dom`包，而不是`org.dom4j`包。  
+路径：test目录下的`cn.zzs.dom4j`。 
+
+注意：因为使用的是`w3c`的 DOM 接口，所以节点对象导的是`org.w3c.dom`包，而不是`org.dom4j`包。
 
 ```java
 	@Test
@@ -290,7 +309,8 @@ dom4j：2.1.1
 ```
 
 ### 测试结果
-此时，在项目路径下会生成`members.xml`，文件内容如下，可以看到，使用`w3c`的`DOM`接口输出的内容没有缩进格式。  
+
+此时，在项目路径下会生成 members.xml，文件内容如下，可以看到，使用`w3c`的 DOM 接口输出的内容没有缩进格式。 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -308,18 +328,20 @@ dom4j：2.1.1
 </members>
 ```
 ## 生成xml文件--使用dom4j的DOM接口
+
 ### 主要步骤
 
-1. 通过`DocumentHelper`获得`Document`对象，这个对象可以看成xml的树；  
+1. 通过 DocumentHelper 获得 Document 对象，这个对象可以看成  xml  的树； 
 
-2. 将对象转化为节点，并添加在`Document`这棵树上；  
+2. 将对象转化为节点，并添加在 Document 这棵树上； 
 
-3. 通过`XMLWriter`对象将树输出到文件中。  
+3. 通过 XMLWriter 对象将树输出到文件中。 
 
 ### 编写测试类
-路径：test目录下的`cn.zzs.dom4j`。通过对比，可以看出，`dom4j`的API相比JDK的还是要方便很多。  
 
-注意：因为使用的是`dom4j`的`DOM`接口，所以节点对象导的是`org.dom4j`包，而不是`org.w3c.dom`包（`dom4j`一个很大的特点就是改造了`w3c`的`DOM`接口，极大地简化了我们对节点的操作）。  
+路径：test 目录下的`cn.zzs.dom4j`。通过对比，可以看出，dom4j 的 API 相比 JDK 的还是要方便很多。 
+
+注意：因为使用的是 dom4j 的 DOM 接口，所以节点对象导的是`org.dom4j`包，而不是`org.w3c.dom`包（dom4j 一个很大的特点就是改造了`w3c`的 DOM 接口，极大地简化了我们对节点的操作）。 
 
 ```java
 	@Test
@@ -359,7 +381,8 @@ dom4j：2.1.1
 	}
 ```
 ### 测试结果
-此时，在项目路径下会生成`members.xml`，文件内容如下，可以看出`dom4j`输出文件会进行缩进处理，而JDK的不会：  
+
+此时，在项目路径下会生成`members.xml`，文件内容如下，可以看出 dom4j 输出文件会进行缩进处理，而JDK的不会：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -378,8 +401,10 @@ dom4j：2.1.1
 </members>
 ```
 # 使用例子--解析xml文件
+
 ## 需求
-1. 解析xml：解析上面生成的xml文件，将学生和老师节点按以下格式遍历打印出来（当然也可以再封装成对象返回给调用者，这里就不扩展了）。  
+
+1. 解析xml：解析上面生成的xml文件，将学生和老师节点按以下格式遍历打印出来（当然也可以再封装成对象返回给调用者，这里就不扩展了）。 
 
 ```
 student:name=张三,location=河南,age=18
@@ -390,17 +415,19 @@ teacher:name=zzf,location=新疆,age=26
 teacher:name=lt,location=北京,age=20
 ```
 
-2. `dom4j`结合`XPath`查找指定节点
+2. dom4j 结合 XPath 查找指定节点
 
 ## 主要步骤
-1. 通过`SAXReader`对象读取和解析xml文件，获得`Document`对象，即xml树；  
 
-2. 调用`Node`的方法遍历打印xml树的节点；  
+1. 通过 SAXReader 对象读取和解析xml文件，获得 Document 对象，即xml树； 
 
-3. 使用`XPath`查询指定节点。  
+2. 调用 Node 的方法遍历打印xml树的节点； 
+
+3. 使用 XPath 查询指定节点。
 
 ## 测试遍历节点
-考虑篇幅，这里仅给出一种节点遍历方式，项目源码中还给出了其他的几种。  
+
+考虑篇幅，这里仅给出一种节点遍历方式，项目源码中还给出了其他的几种。 
 
 ```java
 	/**
@@ -493,26 +520,29 @@ student:age=20,location=北京,name=王五
 //student[@*]|选取所有具有属性的节点
 //members/students\\|//members/teachers|选取members下的students子节点和teachers子节点
 
-# 源码分析  
-本文会先介绍`dom4j`如何将xml元素抽象成具体的对象，再去分析`dom4j`解析xml文件的过程（注意，阅读以下内容前需要了解和使用过JDK自带的`DOM`和`SAX`）。  
+# 源码分析 
+
+本文会先介绍`dom4j`如何将xml元素抽象成具体的对象，再去分析`dom4j`解析xml文件的过程（注意，阅读以下内容前需要了解和使用过JDK自带的`DOM`和`SAX`）。 
 
 ## dom4j节点的类结构
-先来看下一个完整xml的元素组成，可以看出，一个xml文件包含了`Document`、`Element`、`Comment`、`Attribute`、`DocumentType`、`Text`等等。  
+
+先来看下一个完整xml的元素组成，可以看出，一个xml文件包含了`Document`、`Element`、`Comment`、`Attribute`、`DocumentType`、`Text`等等。 
 
 ![xml元素组成](https://img2018.cnblogs.com/blog/1731892/201911/1731892-20191123120233242-1363075546.png)
 
 
 
-`DOM`的思想就是将xml元素解析为具体对象，并构建树形数据结构。基于此，`w3c`提供了xml元素的接口规范，`dom4j`基本借用了这套规范（如下图），只是改造了接口的方法，使得我们操作时更加简便。  
+`DOM`的思想就是将xml元素解析为具体对象，并构建树形数据结构。基于此，`w3c`提供了xml元素的接口规范，`dom4j`基本借用了这套规范（如下图），只是改造了接口的方法，使得我们操作时更加简便。 
 
 ![dom4j的节点接口继承图](https://img2018.cnblogs.com/blog/1731892/201911/1731892-20191123120357524-2028719224.png)
 
 
 
 ## SAXReader.read(File file)
-通过使用例子可知，我们解析xml文件的入口是`SAXReader`对象的`read`方法，入参可以是文件路径、url、字节流、字符流等，这里以传入文件路径为例。  
 
-注意：考虑篇幅和可读性，以下代码经过删减，仅保留所需部分。  
+通过使用例子可知，我们解析xml文件的入口是`SAXReader`对象的`read`方法，入参可以是文件路径、url、字节流、字符流等，这里以传入文件路径为例。 
+
+注意：考虑篇幅和可读性，以下代码经过删减，仅保留所需部分。 
 
 ```java
     public Document read(File file) throws DocumentException {
@@ -540,9 +570,10 @@ student:age=20,location=北京,name=王五
     }
 ```
 ## SAXReader.read(InputSource in)
-看到这个方法的代码时，使用过JDK的`SAX`的朋友应该很熟悉，没错，`dom4j`也是采用事件处理的机制来解析xml。其实，只是这里设置的`SAXContentHandler`已经实现好了相关的方法，这些方法共同完成一件事情：构建xml树。明白这一点，应该就能理解`dom4j`是如何解决`SAX`和`DOM`的缺点了。  
 
-注意：考虑篇幅和可读性，以下代码经过删减，仅保留所需部分。  
+看到这个方法的代码时，使用过JDK的`SAX`的朋友应该很熟悉，没错，`dom4j`也是采用事件处理的机制来解析xml。其实，只是这里设置的`SAXContentHandler`已经实现好了相关的方法，这些方法共同完成一件事情：构建xml树。明白这一点，应该就能理解`dom4j`是如何解决`SAX`和`DOM`的缺点了。 
+
+注意：考虑篇幅和可读性，以下代码经过删减，仅保留所需部分。 
 
 ```java
     public Document read(InputSource in) throws DocumentException {
@@ -586,9 +617,11 @@ student:age=20,location=北京,name=王五
 ```
 
 ## SAXContentHandler
-通过上面的分析，可知`SAXContentHandler`是`dom4j`构建xml树的关键。这里看下它的几个重要方法和属性。  
+
+通过上面的分析，可知`SAXContentHandler`是`dom4j`构建xml树的关键。这里看下它的几个重要方法和属性。 
 
 ### startDocument()
+
 ```java
     // xml树
     private Document document;
@@ -624,6 +657,7 @@ student:age=20,location=北京,name=王五
     }
 ```
 ### startElement(String,String,String,Attributes)
+
 ```java
     public void startElement(String namespaceURI, String localName,
             String qualifiedName, Attributes attributes) throws SAXException {
@@ -658,6 +692,7 @@ student:age=20,location=北京,name=王五
     }
 ```
 ### endElement(String, String, String)
+
 ```java
     public void endElement(String namespaceURI, String localName, String qName)
             throws SAXException {
@@ -684,9 +719,10 @@ student:age=20,location=北京,name=王五
         textBuffer = null;
     }
 ```
-以上，`dom4j`的源码分析基本已经分析完，其他具体细节后续再做补充。  
- 
-# 参考资料：  
+以上，dom4j的源码分析基本已经分析完，其他具体细节后续再做补充。 
+
+# 参考资料： 
+
 [浅析SAX,DOM,JAXP,JDOM与DOM4J之间的关系](https://blog.csdn.net/xiongqi215/article/details/10125281)
 
 > 相关源码请移步：https://github.com/ZhangZiSheng001/dom4j-demo
