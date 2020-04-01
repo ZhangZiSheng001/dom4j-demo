@@ -9,10 +9,10 @@
  ]>
 <!-- 学生节点 -->
 <students>
-	<student >
+    <student>
         <name>&myName;</name>
         <age>18</age>
         <address>河南</address>
         <desc><![CDATA[<a href="#"></a>]]></desc>
-	</student>
+    </student>
 </students>

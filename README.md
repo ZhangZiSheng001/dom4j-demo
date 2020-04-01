@@ -69,33 +69,33 @@ JDK针对解析xml提供的接口，不是具体实现，在`org.xml.sax`包。S
 下面以例子说明，通过 SAX 解析xml并打印节点名：
 
 ```java
-	/*这里解释下四个的接口：
-	EntityResolver：需要实现resolveEntity方法。当解析xml需要引入外部数据源时触发，通过这个方法可以重定向到本地数据源或进行其他操作。
-	DTDHandler：需要实现notationDecl和unparsedEntityDecl方法。当解析到"NOTATION", "ENTITY"或 "ENTITIES"时触发。
-	ContentHandler：最常用的一个接口，需要实现startDocument、endDocument、startElement、endElement等方法。当解析到指定元素类型时触发。
-	ErrorHandler：需要实现warning、error或fatalError方法。当解析出现异常时会触发。
-	*/
-	@Test
-	public void test04() throws Exception {
-		//DefaultHandler实现了EntityResolver, DTDHandler, ContentHandler, ErrorHandler四个接口		
-		DefaultHandler handler = new DefaultHandler() {
-			@Override
-			//当解析到Element时，触发打印该节点名
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-				System.out.println(qName);
-			}
-		};
-		//获取解析器实例
-		XMLReader xr = XMLReaderFactory.createXMLReader();
-		//设置处理类
-		xr.setContentHandler(handler);
-		/*
-		 * xr.setErrorHandler(handler); 
-		 * xr.setDTDHandler(handler); 
-		 * xr.setEntityResolver(handler);
-		 */
-		xr.parse(new InputSource("members.xml"));
-	}
+    /*这里解释下四个的接口：
+    EntityResolver：需要实现resolveEntity方法。当解析xml需要引入外部数据源时触发，通过这个方法可以重定向到本地数据源或进行其他操作。
+    DTDHandler：需要实现notationDecl和unparsedEntityDecl方法。当解析到"NOTATION", "ENTITY"或 "ENTITIES"时触发。
+    ContentHandler：最常用的一个接口，需要实现startDocument、endDocument、startElement、endElement等方法。当解析到指定元素类型时触发。
+    ErrorHandler：需要实现warning、error或fatalError方法。当解析出现异常时会触发。
+    */
+    @Test
+    public void test04() throws Exception {
+        //DefaultHandler实现了EntityResolver, DTDHandler, ContentHandler, ErrorHandler四个接口        
+        DefaultHandler handler = new DefaultHandler() {
+            @Override
+            //当解析到Element时，触发打印该节点名
+            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                System.out.println(qName);
+            }
+        };
+        //获取解析器实例
+        XMLReader xr = XMLReaderFactory.createXMLReader();
+        //设置处理类
+        xr.setContentHandler(handler);
+        /*
+         * xr.setErrorHandler(handler); 
+         * xr.setDTDHandler(handler); 
+         * xr.setEntityResolver(handler);
+         */
+        xr.parse(new InputSource("members.xml"));
+    }
 ```
 因为 SAX 是基于事件处理的，不需要等到整个xml文件都解析完才执行我们的操作，所以效率较高。但 SAX 存在一个较大缺点，就是**不能随机访问节点**，因为 SAX 不会主动地去保存处理过的元素（优点就是**内存占用小、效率高**），如果想要保存读取的元素，开发人员先构建出一个xml树形结构，再手动往里面放入元素，非常麻烦（本质上 dom4j 就是通过 SAX 来构建xml树）。
 
@@ -104,18 +104,18 @@ JDK针对解析xml提供的接口，不是具体实现，在`org.xml.sax`包。S
 JDK针对解析xml提供的接口，不是具体实现，在`org.w3c.dom`包。DOM 采用了解析方式是一次性加载整个XML文档，在内存中形成一个树形的数据结构，开发人员可以随机地操作元素。见以下例子：
 
 ```java
-	@SuppressWarnings("restriction")
-	@Test
-	public void test05() throws Exception {
-		//获得DOMParser对象
-		com.sun.org.apache.xerces.internal.parsers.DOMParser domParser = new com.sun.org.apache.xerces.internal.parsers.DOMParser();
-		//解析文件
-		domParser.parse(new InputSource("members.xml"));
-		//获得Document对象
-		Document document=domParser.getDocument();
-		// 遍历节点
-		printNodeList(document.getChildNodes());		
-	}
+    @SuppressWarnings("restriction")
+    @Test
+    public void test05() throws Exception {
+        //获得DOMParser对象
+        com.sun.org.apache.xerces.internal.parsers.DOMParser domParser = new com.sun.org.apache.xerces.internal.parsers.DOMParser();
+        //解析文件
+        domParser.parse(new InputSource("members.xml"));
+        //获得Document对象
+        Document document=domParser.getDocument();
+        // 遍历节点
+        printNodeList(document.getChildNodes());        
+    }
 ```
 通过DOM解析，我们可以获取任意节点进行操作。但是，DOM 有两个缺点：
 1. 由于一次性加载整个XML文件到内存，当处理较大文件时，容易出现内存溢出。
@@ -127,31 +127,31 @@ JDK针对解析xml提供的接口，不是具体实现，在`org.w3c.dom`包。D
 
 ### DOM解析器
 ```java
-	@Test
-	public void test02() throws Exception {
-		// 获得DocumentBuilder对象
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		// 解析xml文件，获得Document对象
-		Document document = builder.parse("members.xml");
-		// 遍历节点
-		printNodeList(document.getChildNodes());
-	}
+    @Test
+    public void test02() throws Exception {
+        // 获得DocumentBuilder对象
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        // 解析xml文件，获得Document对象
+        Document document = builder.parse("members.xml");
+        // 遍历节点
+        printNodeList(document.getChildNodes());
+    }
 ```
 
 ### 获取SAX解析器
 ```java
-	@Test
-	public void test03() throws Exception {
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser = factory.newSAXParser();
-		saxParser.parse("members.xml", new DefaultHandler() {
-			@Override
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-				System.out.println(qName);
-			}
-		});
-	}
+    @Test
+    public void test03() throws Exception {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser saxParser = factory.newSAXParser();
+        saxParser.parse("members.xml", new DefaultHandler() {
+            @Override
+            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                System.out.println(qName);
+            }
+        });
+    }
 ```
 其实，JAXP 并没有很大程度提高 DOM 和 SAX 的易用性，更多地体现在获取解析器时实现解耦，并没有解决 SAX 和 DOM 的缺点。 
 
@@ -182,22 +182,22 @@ dom4j：2.1.1
 ```xml
 <!-- junit -->
 <dependency>
-	<groupId>junit</groupId>
-	<artifactId>junit</artifactId>
-	<version>4.12</version>
-	<scope>test</scope>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+    <scope>test</scope>
 </dependency>
 <!-- dom4j的jar包 -->
 <dependency>
-	<groupId>org.dom4j</groupId>
-	<artifactId>dom4j</artifactId>
-	<version>2.1.1</version>
+    <groupId>org.dom4j</groupId>
+    <artifactId>dom4j</artifactId>
+    <version>2.1.1</version>
 </dependency>
 <!-- dom4j使用XPath需要的jar包 -->
 <dependency>
-	<groupId>jaxen</groupId>
-	<artifactId>jaxen</artifactId>
-	<version>1.1.6</version>
+    <groupId>jaxen</groupId>
+    <artifactId>jaxen</artifactId>
+    <version>1.1.6</version>
 </dependency>
 <!-- 配置BeanUtils的包，这个我自定义工具类用的，如果只是简单使用dom4j可以不引入 -->
 <dependency>
@@ -247,65 +247,65 @@ dom4j：2.1.1
 注意：因为使用的是`w3c`的 DOM 接口，所以节点对象导的是`org.w3c.dom`包，而不是`org.dom4j`包。
 
 ```java
-	@Test
-	public void test02() throws Exception {
-		// 创建工厂对象
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		// 创建DocumentBuilder对象
-		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		// 创建Document对象
-		Document document = documentBuilder.newDocument();
+    @Test
+    public void test02() throws Exception {
+        // 创建工厂对象
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        // 创建DocumentBuilder对象
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        // 创建Document对象
+        Document document = documentBuilder.newDocument();
 
-		// 创建根节点
-		Element root = document.createElement("members");
-		document.appendChild(root);
+        // 创建根节点
+        Element root = document.createElement("members");
+        document.appendChild(root);
 
-		// 添加一级节点
-		Element studentsElement = (Element)root.appendChild(document.createElement("students"));
-		Element teachersElement = (Element)root.appendChild(document.createElement("teachers"));
+        // 添加一级节点
+        Element studentsElement = (Element)root.appendChild(document.createElement("students"));
+        Element teachersElement = (Element)root.appendChild(document.createElement("teachers"));
 
-		// 添加二级节点并设置属性
-		Element studentElement1 = (Element)studentsElement.appendChild(document.createElement("student"));
-		studentElement1.setAttribute("name", "张三");
-		studentElement1.setAttribute("age", "18");
-		studentElement1.setAttribute("location", "河南");
-		Element studentElement2 = (Element)studentsElement.appendChild(document.createElement("student"));
-		studentElement2.setAttribute("name", "李四");
-		studentElement2.setAttribute("age", "26");
-		studentElement2.setAttribute("location", "新疆");	
-		Element studentElement3 = (Element)studentsElement.appendChild(document.createElement("student"));
-		studentElement3.setAttribute("name", "王五");
-		studentElement3.setAttribute("age", "20");
-		studentElement3.setAttribute("location", "北京");		
-		Element teacherElement1 = (Element)teachersElement.appendChild(document.createElement("teacher"));
-		teacherElement1.setAttribute("name", "zzs");
-		teacherElement1.setAttribute("age", "18");
-		teacherElement1.setAttribute("location", "河南");	
-		Element teacherElement2 = (Element)teachersElement.appendChild(document.createElement("teacher"));
-		teacherElement2.setAttribute("name", "zzf");
-		teacherElement2.setAttribute("age", "26");
-		teacherElement2.setAttribute("location", "新疆");		
-		Element teacherElement3 = (Element)teachersElement.appendChild(document.createElement("teacher"));
-		teacherElement3.setAttribute("name", "lt");
-		teacherElement3.setAttribute("age", "20");
-		teacherElement3.setAttribute("location", "北京");	
-			
-		// 获取文件对象
-		File file = new File("members.xml");
-		if(!file.exists()) {
-			file.createNewFile();
-		}
-		// 获取Transformer对象
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		// 设置编码、美化格式
-		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		// 创建DOMSource对象
-		DOMSource domSource = new DOMSource(document);
-		// 将document写出
-		transformer.transform(domSource, new StreamResult(new PrintWriter(new FileOutputStream(file))));	
-	}	
+        // 添加二级节点并设置属性
+        Element studentElement1 = (Element)studentsElement.appendChild(document.createElement("student"));
+        studentElement1.setAttribute("name", "张三");
+        studentElement1.setAttribute("age", "18");
+        studentElement1.setAttribute("location", "河南");
+        Element studentElement2 = (Element)studentsElement.appendChild(document.createElement("student"));
+        studentElement2.setAttribute("name", "李四");
+        studentElement2.setAttribute("age", "26");
+        studentElement2.setAttribute("location", "新疆");    
+        Element studentElement3 = (Element)studentsElement.appendChild(document.createElement("student"));
+        studentElement3.setAttribute("name", "王五");
+        studentElement3.setAttribute("age", "20");
+        studentElement3.setAttribute("location", "北京");        
+        Element teacherElement1 = (Element)teachersElement.appendChild(document.createElement("teacher"));
+        teacherElement1.setAttribute("name", "zzs");
+        teacherElement1.setAttribute("age", "18");
+        teacherElement1.setAttribute("location", "河南");    
+        Element teacherElement2 = (Element)teachersElement.appendChild(document.createElement("teacher"));
+        teacherElement2.setAttribute("name", "zzf");
+        teacherElement2.setAttribute("age", "26");
+        teacherElement2.setAttribute("location", "新疆");        
+        Element teacherElement3 = (Element)teachersElement.appendChild(document.createElement("teacher"));
+        teacherElement3.setAttribute("name", "lt");
+        teacherElement3.setAttribute("age", "20");
+        teacherElement3.setAttribute("location", "北京");    
+            
+        // 获取文件对象
+        File file = new File("members.xml");
+        if(!file.exists()) {
+            file.createNewFile();
+        }
+        // 获取Transformer对象
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        // 设置编码、美化格式
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        // 创建DOMSource对象
+        DOMSource domSource = new DOMSource(document);
+        // 将document写出
+        transformer.transform(domSource, new StreamResult(new PrintWriter(new FileOutputStream(file))));    
+    }    
 ```
 
 ### 测试结果
@@ -344,41 +344,41 @@ dom4j：2.1.1
 注意：因为使用的是 dom4j 的 DOM 接口，所以节点对象导的是`org.dom4j`包，而不是`org.w3c.dom`包（dom4j 一个很大的特点就是改造了`w3c`的 DOM 接口，极大地简化了我们对节点的操作）。 
 
 ```java
-	@Test
-	public void test02() throws Exception {
-		// 创建Document对象
-		Document document = DocumentHelper.createDocument();
+    @Test
+    public void test02() throws Exception {
+        // 创建Document对象
+        Document document = DocumentHelper.createDocument();
 
-		// 添加根节点
-		Element root = document.addElement("members");
+        // 添加根节点
+        Element root = document.addElement("members");
 
-		// 添加一级节点
-		Element studentsElement = root.addElement("students");
-		Element teachersElement = root.addElement("teachers");
+        // 添加一级节点
+        Element studentsElement = root.addElement("students");
+        Element teachersElement = root.addElement("teachers");
 
-		// 添加二级节点并设置属性，dom4j改造了w3c的DOM接口，极大地简化了我们对节点的操作
-		studentsElement.addElement("student").addAttribute("name", "张三").addAttribute("age", "18").addAttribute("location", "河南");
-		studentsElement.addElement("student").addAttribute("name", "李四").addAttribute("age", "26").addAttribute("location", "新疆");
-		studentsElement.addElement("student").addAttribute("name", "王五").addAttribute("age", "20").addAttribute("location", "北京");
-		teachersElement.addElement("teacher").addAttribute("name", "zzs").addAttribute("age", "18").addAttribute("location", "河南");
-		teachersElement.addElement("teacher").addAttribute("name", "zzf").addAttribute("age", "26").addAttribute("location", "新疆");
-		teachersElement.addElement("teacher").addAttribute("name", "lt").addAttribute("age", "20").addAttribute("location", "北京");
+        // 添加二级节点并设置属性，dom4j改造了w3c的DOM接口，极大地简化了我们对节点的操作
+        studentsElement.addElement("student").addAttribute("name", "张三").addAttribute("age", "18").addAttribute("location", "河南");
+        studentsElement.addElement("student").addAttribute("name", "李四").addAttribute("age", "26").addAttribute("location", "新疆");
+        studentsElement.addElement("student").addAttribute("name", "王五").addAttribute("age", "20").addAttribute("location", "北京");
+        teachersElement.addElement("teacher").addAttribute("name", "zzs").addAttribute("age", "18").addAttribute("location", "河南");
+        teachersElement.addElement("teacher").addAttribute("name", "zzf").addAttribute("age", "26").addAttribute("location", "新疆");
+        teachersElement.addElement("teacher").addAttribute("name", "lt").addAttribute("age", "20").addAttribute("location", "北京");
 
-		// 获取文件对象
-		File file = new File("members.xml");
-		if(!file.exists()) {
-			file.createNewFile();
-		}
-		// 创建输出格式，不设置的话不会有缩进效果
-		OutputFormat format = OutputFormat.createPrettyPrint();
-		format.setEncoding("UTF-8");
-		// 获得XMLWriter
-		XMLWriter writer = new XMLWriter(new FileWriter(file), format);
-		// 打印Document
-		writer.write(document);
-		// 释放资源
-		writer.close();
-	}
+        // 获取文件对象
+        File file = new File("members.xml");
+        if(!file.exists()) {
+            file.createNewFile();
+        }
+        // 创建输出格式，不设置的话不会有缩进效果
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setEncoding("UTF-8");
+        // 获得XMLWriter
+        XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+        // 打印Document
+        writer.write(document);
+        // 释放资源
+        writer.close();
+    }
 ```
 ### 测试结果
 
@@ -430,39 +430,39 @@ teacher:name=lt,location=北京,age=20
 考虑篇幅，这里仅给出一种节点遍历方式，项目源码中还给出了其他的几种。 
 
 ```java
-	/**
-	 *  测试解析xml
-	 */
-	@Test
-	public void test03() throws Exception {
-		// 创建指定文件的File对象
-		File file = new File("members.xml");
-		// 创建SAXReader
-		SAXReader saxReader = new SAXReader();
-		// 将xml文件读入成document
-		Document document = saxReader.read(file);
-		// 获得根元素
-		Element root = document.getRootElement();
-		// 递归遍历节点
-		list1(root);
-	}
+    /**
+     *  测试解析xml
+     */
+    @Test
+    public void test03() throws Exception {
+        // 创建指定文件的File对象
+        File file = new File("members.xml");
+        // 创建SAXReader
+        SAXReader saxReader = new SAXReader();
+        // 将xml文件读入成document
+        Document document = saxReader.read(file);
+        // 获得根元素
+        Element root = document.getRootElement();
+        // 递归遍历节点
+        list1(root);
+    }
 
-	/**
-	 * 递归遍历节点
-	 */
-	private void list1(Element parent) {
-		if(parent == null) {
-			return;
-		}
-		// 遍历当前节点属性并输出
-		printAttr(parent);
-		// 递归打印子节点
-		Iterator<Element> iterator2 = parent.elementIterator();
-		while(iterator2.hasNext()) {
-			Element son = (Element)iterator2.next();
-			list1(son);
-		}
-	}
+    /**
+     * 递归遍历节点
+     */
+    private void list1(Element parent) {
+        if(parent == null) {
+            return;
+        }
+        // 遍历当前节点属性并输出
+        printAttr(parent);
+        // 递归打印子节点
+        Iterator<Element> iterator2 = parent.elementIterator();
+        while(iterator2.hasNext()) {
+            Element son = (Element)iterator2.next();
+            list1(son);
+        }
+    }
 ```
 测试结果如下：  
 
@@ -478,24 +478,24 @@ teacher:name=lt,location=北京,age=20
 ## 测试XPath获取指定节点
 
 ```java
-	@Test
-	public void test04() throws Exception {
-		// 创建指定文件的File对象
-		File file = new File("members.xml");
-		// 创建SAXReader
-		SAXReader saxReader = new SAXReader();
-		// 将xml文件读入成document
-		Document document = saxReader.read(file);
-		// 使用xpath随机获取节点
-		List<Node> list = document.selectNodes("//members//students/student");
-		// List<Node> list = xmlParser.getDocument().selectSingleNode("students");
-		// 遍历节点
-		Iterator<Node> iterator = list.iterator();
-		while(iterator.hasNext()) {
-			Element element = (Element)iterator.next();
-			printAttr(element);
-		}
-	}
+    @Test
+    public void test04() throws Exception {
+        // 创建指定文件的File对象
+        File file = new File("members.xml");
+        // 创建SAXReader
+        SAXReader saxReader = new SAXReader();
+        // 将xml文件读入成document
+        Document document = saxReader.read(file);
+        // 使用xpath随机获取节点
+        List<Node> list = document.selectNodes("//members//students/student");
+        // List<Node> list = xmlParser.getDocument().selectSingleNode("students");
+        // 遍历节点
+        Iterator<Node> iterator = list.iterator();
+        while(iterator.hasNext()) {
+            Element element = (Element)iterator.next();
+            printAttr(element);
+        }
+    }
 ```
 测试结果如下：  
 ```java
