@@ -1,183 +1,55 @@
-# 目录
-
-* [简介](#简介)
-* [认识DOM、SAX、JAXP和DOM4J](#认识domsaxjaxp和dom4j)
-  * [xerces解释器](#xerces解释器)
-  * [SAX--事件驱动](#sax--事件驱动)
-  * [DOM--文档对象模型](#dom--文档对象模型)
-  * [JAXP](#jaxp)
-    * [DOM解析器](#dom解析器)
-    * [获取SAX解析器](#获取sax解析器)
-  * [DOM4j](#dom4j)
-* [项目环境](#项目环境)
-  * [工程环境](#工程环境)
-  * [创建项目](#创建项目)
-  * [引入依赖](#引入依赖)
-* [使用例子--生成xml文件](#使用例子--生成xml文件)
-  * [需求](#需求)
-  * [生成xml文件--使用w3c的DOM接口](#生成xml文件--使用w3c的dom接口)
-    * [主要步骤](#主要步骤)
-    * [编写测试类](#编写测试类)
-    * [测试结果](#测试结果)
-  * [生成xml文件--使用dom4j的DOM接口](#生成xml文件--使用dom4j的dom接口)
-    * [主要步骤](#主要步骤-1)
-    * [编写测试类](#编写测试类-1)
-    * [测试结果](#测试结果-1)
-* [使用例子--解析xml文件](#使用例子--解析xml文件)
-  * [需求](#需求-1)
-  * [主要步骤](#主要步骤-2)
-  * [测试遍历节点](#测试遍历节点)
-  * [测试XPath获取指定节点](#测试xpath获取指定节点)
-  * [XPath语法](#xpath语法)
-* [源码分析](#源码分析)
-  * [dom4j节点的类结构](#dom4j节点的类结构)
-  * [SAXReader.read(File file)](#saxreaderreadfile-file)
-  * [SAXReader.read(InputSource in)](#saxreaderreadinputsource-in)
-  * [SAXContentHandler](#saxcontenthandler)
-    * [startDocument()](#startdocument)
-    * [startElement(String,String,String,Attributes)](#startelementstringstringstringattributes)
-    * [endElement(String, String, String)](#endelementstring-string-string)
-    * [endDocument()](#enddocument)
-* [参考资料：](#参考资料)
-
-
-
 # 简介
 
-dom4j 采用  DOM  方式解析 xml，可以读写 xml 文件，并且支持 Xpath 来获取节点。目前，由于其出色的性能和易用性，目前 dom4j 已经得到广泛使用，例如 Spring、 Hibernate 就是使用 dom4j 来解析xml配置。
+什么是dom4j？
 
-注意，dom4j 使用 Xpath需要额外引入 jaxen 的包，另外，针对不需要随机访问节点的读场景，建议采用基于事件驱动的 SAX。
+简单来说，dom4j 就是用来读写 xml 的。相比 JDK 的 JAXP，dom4j 的 API 更容易使用，所以，目前 dom4j 在国内还是比较受欢迎。
 
-本文将包含以下内容（篇幅较长，可根据需要选择阅读）：
+本文主要讲的是如何使用 dom4j 以及分析 dom4j 的源码，除此之外，我希望回答更多的问题，例如，什么是 DOM？什么是 SAX？要不要使用 dom4j？
 
-1. 认识 DOM、SAX、JAXP 和 DOM4j；
-2. 使用例子
-3. 源码分析
+本文的结构大致如下：
 
-# 认识DOM、SAX、JAXP和DOM4J
+1. 先了解DOM和SAX？
+4. 如何使用 dom4j？
+5. 源码分析
+4. 要不要使用 dom4j？
 
-其实，JDK已经带有可以解析xml的api，如 DOM、SAX、JAXP，但为什么 dom4j 会更受欢迎呢？它们有什么区别呢？在学习 dom4j 之前，需要先理解下 DOM、SAX 等概念，因为 dom4j 就是在此基础上改进而来。
+# 先了解DOM和SAX
 
-## xerces解释器
+为什么提到 DOM 和 SAX 呢？因为这是常识，提到 xml 解析，我们很难绕开它们。
 
-先介绍下 xerces 解释器，下面介绍的 SAX、DOM 和 JAXP 都只是接口，而 xerces 解释器就是它们的具体实现，在`com.sun.org.apache.xerces.internal`包。xerces 被称为性能最好的解释器，除了 xerces 外，还有其他的第三方解释器，如 crimson。 
+DOM（Document Object Model） 和 SAX（Simple API for XML Parsing） 是处理 xml 节点的两种方式，注意，**它们只是方法论**。
 
-## SAX--事件驱动
+下面说说它们是如何读 xml 的。首先，从抽象层面，整个 xml 可以看成是一棵树，而具体的 xml 节点可以看成是树的根、枝、叶等。
 
-JDK针对解析xml提供的接口，不是具体实现，在`org.xml.sax`包。SAX 是**基于事件处理**，解析过程中根据当前的XML元素类型，调用用户自己实现的回调方法，如：`startDocument()`，`startElement()`。
+**DOM 是 一边读取 xml 文件，一边在内存中构建 xml 树，整棵树构建完了之后，我可以在树上面找我需要的节点**。
 
-下面以例子说明，通过 SAX 解析xml并打印节点名：
+**SAX 是一边读取 xml 文件，一边处理节点，而不会在内存中构建树**。
 
-```java
-    /*这里解释下四个的接口：
-    EntityResolver：需要实现resolveEntity方法。当解析xml需要引入外部数据源时触发，通过这个方法可以重定向到本地数据源或进行其他操作。
-    DTDHandler：需要实现notationDecl和unparsedEntityDecl方法。当解析到"NOTATION", "ENTITY"或 "ENTITIES"时触发。
-    ContentHandler：最常用的一个接口，需要实现startDocument、endDocument、startElement、endElement等方法。当解析到指定元素类型时触发。
-    ErrorHandler：需要实现warning、error或fatalError方法。当解析出现异常时会触发。
-    */
-    @Test
-    public void test04() throws Exception {
-        //DefaultHandler实现了EntityResolver, DTDHandler, ContentHandler, ErrorHandler四个接口        
-        DefaultHandler handler = new DefaultHandler() {
-            @Override
-            //当解析到Element时，触发打印该节点名
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                System.out.println(qName);
-            }
-        };
-        //获取解析器实例
-        XMLReader xr = XMLReaderFactory.createXMLReader();
-        //设置处理类
-        xr.setContentHandler(handler);
-        /*
-         * xr.setErrorHandler(handler); 
-         * xr.setDTDHandler(handler); 
-         * xr.setEntityResolver(handler);
-         */
-        xr.parse(new InputSource("members.xml"));
-    }
-```
-因为 SAX 是基于事件处理的，不需要等到整个xml文件都解析完才执行我们的操作，所以效率较高。但 SAX 存在一个较大缺点，就是**不能随机访问节点**，因为 SAX 不会主动地去保存处理过的元素（优点就是**内存占用小、效率高**），如果想要保存读取的元素，开发人员先构建出一个xml树形结构，再手动往里面放入元素，非常麻烦（本质上 dom4j 就是通过 SAX 来构建xml树）。
+为了更好理解，我举个例子。假如我要买橘子，DOM 是将所有橘子全部摆在你面前，你可以随便挑，而 SAX 则是一次只掏出一个橘子，然后问你要还是不要，如果你不要，那就把橘子收回，拿出下一个，如果你反悔了，想要上一个橘子，抱歉，那个已经不在了。
 
-## DOM--文档对象模型
+当然，这两种方式各有优缺点，没有绝对的好坏。DOM 支持随机访问节点，以及对节点进行增删改，但由于需要在内存中构建 xml 树，当树太大时容易出现内存溢出，而 SAX 不需要构建树，所以性能更高，但它不支持随机访问节点以及增删改。
 
-JDK针对解析xml提供的接口，不是具体实现，在`org.w3c.dom`包。DOM 采用了解析方式是一次性加载整个XML文档，在内存中形成一个树形的数据结构，开发人员可以随机地操作元素。见以下例子：
+通常情况下，我们更多的会使用 DOM，因为我们的 xml 并不大，而且经常需要随机访问节点，例如，读取配置文件一般就是用 DOM。在文件太大且不需要随机访问节点时，可以使用 SAX，例如，读取大型 xlsx 时就是用 SAX（没错，xlsx 本质也是 xml）。
 
-```java
-    @SuppressWarnings("restriction")
-    @Test
-    public void test05() throws Exception {
-        //获得DOMParser对象
-        com.sun.org.apache.xerces.internal.parsers.DOMParser domParser = new com.sun.org.apache.xerces.internal.parsers.DOMParser();
-        //解析文件
-        domParser.parse(new InputSource("members.xml"));
-        //获得Document对象
-        Document document=domParser.getDocument();
-        // 遍历节点
-        printNodeList(document.getChildNodes());        
-    }
-```
-通过DOM解析，我们可以获取任意节点进行操作。但是，DOM 有两个缺点：
-1. 由于一次性加载整个XML文件到内存，当处理较大文件时，容易出现内存溢出。
-2. 节点的操作还是比较繁琐。
+本文说到的 **dom4j 就属于 DOM**。
 
-## JAXP
+# 如何使用dom4j
 
-封装了 SAX、DOM 两种接口，它并没有为JAVA解析XML提供任何新功能，只是对外提供更解耦、简便操作的API。如下：
+## 项目环境
 
-### DOM解析器
-```java
-    @Test
-    public void test02() throws Exception {
-        // 获得DocumentBuilder对象
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        // 解析xml文件，获得Document对象
-        Document document = builder.parse("members.xml");
-        // 遍历节点
-        printNodeList(document.getChildNodes());
-    }
-```
+JDK：1.8.0_231
 
-### 获取SAX解析器
-```java
-    @Test
-    public void test03() throws Exception {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser saxParser = factory.newSAXParser();
-        saxParser.parse("members.xml", new DefaultHandler() {
-            @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                System.out.println(qName);
-            }
-        });
-    }
-```
-其实，JAXP 并没有很大程度提高 DOM 和 SAX 的易用性，更多地体现在获取解析器时实现解耦，并没有解决 SAX 和 DOM 的缺点。 
+maven：3.6.3
 
-## DOM4j
+IDE：ideaIC-2021.1.win
 
-dom4j 本质上采用的是 DOM 方式解析 xml，也就是说它支持随机访问节点，相比 JDK 的 DOM 和 JAXP，dom4j 提供了更加简便的api（但是，考虑可移植，许多项目还是会采用 JAXP）。  以下通过使用例子和源码分析将作出说明。
+dom4j：2.1.3
 
-# 项目环境
+## maven依赖
 
-## 工程环境
+项目类型 Maven Project，打包方式 jar。
 
-JDK：1.8
-
-maven：3.6.1
-
-IDE：sts4
-
-dom4j：2.1.1
-
-## 创建项目
-
-项目类型Maven Project，打包方式jar。
-
-## 引入依赖
-
-注意：dom4j 使用 XPath，必须引入 jaxen 的 jar 包。
+注意：如果要使用 XPath，必须引入 jaxen 的 jar 包。
 
 ```xml
 <!-- junit -->
@@ -191,7 +63,7 @@ dom4j：2.1.1
 <dependency>
     <groupId>org.dom4j</groupId>
     <artifactId>dom4j</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.3/version>
 </dependency>
 <!-- dom4j使用XPath需要的jar包 -->
 <dependency>
@@ -199,379 +71,159 @@ dom4j：2.1.1
     <artifactId>jaxen</artifactId>
     <version>1.1.6</version>
 </dependency>
-<!-- 配置BeanUtils的包，这个我自定义工具类用的，如果只是简单使用dom4j可以不引入 -->
-<dependency>
-    <groupId>commons-beanutils</groupId>
-    <artifactId>commons-beanutils</artifactId>
-    <version>1.9.3</version>
-</dependency>
 ```
 
-# 使用例子--生成xml文件
-
-本例子将分别使用 dom4j 和 JDK 的 DOM 接口生成 xml 文件（使用JDK的 DOM 接口时会使用 JAXP 的 API）。
+# 写xml
 
 ## 需求
 
-构建xml树，添加节点，并生成xml文件。格式如下： 
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<members>
-  <students>
-    <student name="张三" location="河南" age="18"/>
-    <student name="李四" location="新疆" age="26"/>
-    <student name="王五" location="北京" age="20"/>
-  </students>
-  <teachers>
-    <teacher name="zzs" location="河南" age="18"/>
-    <teacher name="zzf" location="新疆" age="26"/>
-    <teacher name="lt" location="北京" age="20"/>
-  </teachers>
-</members>
-```
-## 生成xml文件--使用w3c的DOM接口
-
-### 主要步骤
-
-1. 通过 JAXP 的API获得 Document 对象，这个对象可以看成xml的树； 
-
-2. 将对象转化为节点，并添加在 Document 这棵树上； 
-
-3. 通过 Transformer 对象将树输出到文件中。 
-
-### 编写测试类
-
-路径：test目录下的`cn.zzs.dom4j`。 
-
-注意：因为使用的是`w3c`的 DOM 接口，所以节点对象导的是`org.w3c.dom`包，而不是`org.dom4j`包。
-
-```java
-    @Test
-    public void test02() throws Exception {
-        // 创建工厂对象
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        // 创建DocumentBuilder对象
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        // 创建Document对象
-        Document document = documentBuilder.newDocument();
-
-        // 创建根节点
-        Element root = document.createElement("members");
-        document.appendChild(root);
-
-        // 添加一级节点
-        Element studentsElement = (Element)root.appendChild(document.createElement("students"));
-        Element teachersElement = (Element)root.appendChild(document.createElement("teachers"));
-
-        // 添加二级节点并设置属性
-        Element studentElement1 = (Element)studentsElement.appendChild(document.createElement("student"));
-        studentElement1.setAttribute("name", "张三");
-        studentElement1.setAttribute("age", "18");
-        studentElement1.setAttribute("location", "河南");
-        Element studentElement2 = (Element)studentsElement.appendChild(document.createElement("student"));
-        studentElement2.setAttribute("name", "李四");
-        studentElement2.setAttribute("age", "26");
-        studentElement2.setAttribute("location", "新疆");    
-        Element studentElement3 = (Element)studentsElement.appendChild(document.createElement("student"));
-        studentElement3.setAttribute("name", "王五");
-        studentElement3.setAttribute("age", "20");
-        studentElement3.setAttribute("location", "北京");        
-        Element teacherElement1 = (Element)teachersElement.appendChild(document.createElement("teacher"));
-        teacherElement1.setAttribute("name", "zzs");
-        teacherElement1.setAttribute("age", "18");
-        teacherElement1.setAttribute("location", "河南");    
-        Element teacherElement2 = (Element)teachersElement.appendChild(document.createElement("teacher"));
-        teacherElement2.setAttribute("name", "zzf");
-        teacherElement2.setAttribute("age", "26");
-        teacherElement2.setAttribute("location", "新疆");        
-        Element teacherElement3 = (Element)teachersElement.appendChild(document.createElement("teacher"));
-        teacherElement3.setAttribute("name", "lt");
-        teacherElement3.setAttribute("age", "20");
-        teacherElement3.setAttribute("location", "北京");    
-            
-        // 获取文件对象
-        File file = new File("members.xml");
-        if(!file.exists()) {
-            file.createNewFile();
-        }
-        // 获取Transformer对象
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        // 设置编码、美化格式
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        // 创建DOMSource对象
-        DOMSource domSource = new DOMSource(document);
-        // 将document写出
-        transformer.transform(domSource, new StreamResult(new PrintWriter(new FileOutputStream(file))));    
-    }    
-```
-
-### 测试结果
-
-此时，在项目路径下会生成 members.xml，文件内容如下，可以看到，使用`w3c`的 DOM 接口输出的内容没有缩进格式。 
+已有一个学生对象的集合，使用 java 代码把学生对象转换为 xml 节点，做出这么一个 xml 文件。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<members>
 <students>
-<student age="18" location="河南" name="张三"/>
-<student age="26" location="新疆" name="李四"/>
-<student age="20" location="北京" name="王五"/>
+    <student name="zzf0" age="19" location="广州第0大道"/>
+    <student name="zzf1" age="19" location="广州第1大道"/>
+    <student name="zzf2" age="19" location="广州第2大道"/>
+    <!--省略-->
+    <!-- ······ -->
+    <student name="zzf99" age="19" location="广州第99大道"/>
 </students>
-<teachers>
-<teacher age="18" location="河南" name="zzs"/>
-<teacher age="26" location="新疆" name="zzf"/>
-<teacher age="20" location="北京" name="lt"/>
-</teachers>
-</members>
 ```
-## 生成xml文件--使用dom4j的DOM接口
+## 使用dom4j写xml
 
-### 主要步骤
-
-1. 通过 DocumentHelper 获得 Document 对象，这个对象可以看成  xml  的树； 
-
-2. 将对象转化为节点，并添加在 Document 这棵树上； 
-
-3. 通过 XMLWriter 对象将树输出到文件中。 
-
-### 编写测试类
-
-路径：test 目录下的`cn.zzs.dom4j`。通过对比，可以看出，dom4j 的 API 相比 JDK 的还是要方便很多。 
-
-注意：因为使用的是 dom4j 的 DOM 接口，所以节点对象导的是`org.dom4j`包，而不是`org.w3c.dom`包（dom4j 一个很大的特点就是改造了`w3c`的 DOM 接口，极大地简化了我们对节点的操作）。 
+dom4j 添加节点时支持链式编程（JAXP 就不支持），所以写起来比较简洁一些。
 
 ```java
-    @Test
-    public void test02() throws Exception {
+    public static void write(List<Student> students) throws Exception {
         // 创建Document对象
         Document document = DocumentHelper.createDocument();
-
         // 添加根节点
-        Element root = document.addElement("members");
-
-        // 添加一级节点
-        Element studentsElement = root.addElement("students");
-        Element teachersElement = root.addElement("teachers");
-
-        // 添加二级节点并设置属性，dom4j改造了w3c的DOM接口，极大地简化了我们对节点的操作
-        studentsElement.addElement("student").addAttribute("name", "张三").addAttribute("age", "18").addAttribute("location", "河南");
-        studentsElement.addElement("student").addAttribute("name", "李四").addAttribute("age", "26").addAttribute("location", "新疆");
-        studentsElement.addElement("student").addAttribute("name", "王五").addAttribute("age", "20").addAttribute("location", "北京");
-        teachersElement.addElement("teacher").addAttribute("name", "zzs").addAttribute("age", "18").addAttribute("location", "河南");
-        teachersElement.addElement("teacher").addAttribute("name", "zzf").addAttribute("age", "26").addAttribute("location", "新疆");
-        teachersElement.addElement("teacher").addAttribute("name", "lt").addAttribute("age", "20").addAttribute("location", "北京");
-
-        // 获取文件对象
-        File file = new File("members.xml");
-        if(!file.exists()) {
+        Element root = document.addElement("students");
+        // 添加一级节点并设置属性
+        students.stream().forEach(student -> {
+            root.addElement("student")
+                    .addAttribute("name", student.getName())
+                    .addAttribute("age", String.valueOf(student.getAge()))
+                    .addAttribute("location", student.getLocation());
+        });
+        // 创建文件对象
+        File file = new File("xml/students.xml");
+        if (!file.exists()) {
             file.createNewFile();
         }
-        // 创建输出格式，不设置的话不会有缩进效果
-        OutputFormat format = OutputFormat.createPrettyPrint();
-        format.setEncoding("UTF-8");
+        // 创建输出格式
+        OutputFormat format = OutputFormat.createPrettyPrint();// 有换行和缩进效果
+        // OutputFormat format = OutputFormat.createCompactFormat();// 无换行和缩进效果
+        format.setEncoding("UTF-8");// 编码
         // 获得XMLWriter
-        XMLWriter writer = new XMLWriter(new FileWriter(file), format);
-        // 打印Document
+        XMLWriter writer = new XMLWriter(new FileOutputStream(file), format);
+        // 输出xml
         writer.write(document);
-        // 释放资源
+        // 释放资源(这里会帮我们把FileOutputStream关闭)
         writer.close();
     }
 ```
-### 测试结果
 
-此时，在项目路径下会生成`members.xml`，文件内容如下，可以看出 dom4j 输出文件会进行缩进处理，而JDK的不会：
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-
-<members>
-  <students>
-    <student name="张三" age="18" location="河南"/>
-    <student name="李四" age="26" location="新疆"/>
-    <student name="王五" age="20" location="北京"/>
-  </students>
-  <teachers>
-    <teacher name="zzs" age="18" location="河南"/>
-    <teacher name="zzf" age="26" location="新疆"/>
-    <teacher name="lt" age="20" location="北京"/>
-  </teachers>
-</members>
-```
-# 使用例子--解析xml文件
+# 读xml
 
 ## 需求
 
-1. 解析xml：解析上面生成的xml文件，将学生和老师节点按以下格式遍历打印出来（当然也可以再封装成对象返回给调用者，这里就不扩展了）。 
+使用 java 代码读取上面生成的 xml 文件，将学生节点封装成学生对象。
 
-```
-student:name=张三,location=河南,age=18
-student:name=李四,location=新疆,age=26
-student:name=王五,location=北京,age=20
-teacher:name=zzs,location=河南,age=18
-teacher:name=zzf,location=新疆,age=26
-teacher:name=lt,location=北京,age=20
-```
+## 使用dom4j读xml
 
-2. dom4j 结合 XPath 查找指定节点
-
-## 主要步骤
-
-1. 通过 SAXReader 对象读取和解析xml文件，获得 Document 对象，即xml树； 
-
-2. 调用 Node 的方法遍历打印xml树的节点； 
-
-3. 使用 XPath 查询指定节点。
-
-## 测试遍历节点
-
-考虑篇幅，这里仅给出一种节点遍历方式，项目源码中还给出了其他的几种。 
+dom4j 节点的遍历支持`Collection`（JAXP 就不支持），所以可以更简单地遍历。
 
 ```java
-    /**
-     *  测试解析xml
-     */
-    @Test
-    public void test03() throws Exception {
-        // 创建指定文件的File对象
-        File file = new File("members.xml");
+    public static List<Student> getStudentFromXml() throws Exception {
         // 创建SAXReader
-        SAXReader saxReader = new SAXReader();
-        // 将xml文件读入成document
-        Document document = saxReader.read(file);
-        // 获得根元素
+        SAXReader saxReader = SAXReader.createDefault();
+        // 将xml解析为树
+        Document document = saxReader.read("xml/students.xml");
+        // 获得根节点
         Element root = document.getRootElement();
-        // 递归遍历节点
-        list1(root);
+        // 获取所有student节点并映射成学生对象(这里假设我不知道student节点在哪一级，或者哪几级)
+        return mapElementsToStudents(root.elements());
     }
 
-    /**
-     * 递归遍历节点
-     */
-    private void list1(Element parent) {
-        if(parent == null) {
-            return;
-        }
-        // 遍历当前节点属性并输出
-        printAttr(parent);
-        // 递归打印子节点
-        Iterator<Element> iterator2 = parent.elementIterator();
-        while(iterator2.hasNext()) {
-            Element son = (Element)iterator2.next();
-            list1(son);
-        }
+    private static List<Student> mapElementsToStudents(List<Element> elements) {
+        List<Student> students = new ArrayList<>();
+        elements.stream().forEach(element -> {
+            // 转换当前节点
+            if ("student".equals(element.getName())) {
+                Optional.ofNullable(mapElementToStudent(element)).ifPresent(students::add);
+            }
+            // 递归转换子节点
+            students.addAll(mapElementsToStudents(element.elements()));
+        });
+        return students;
+    }
+
+    private static Student mapElementToStudent(Element element) {
+        Student student = new Student();
+        Optional.ofNullable(element.attributeValue("name")).ifPresent(student::setName);
+        Optional.ofNullable(element.attributeValue("age")).map(Integer::valueOf).ifPresent(student::setAge);
+        Optional.ofNullable(element.attributeValue("location")).ifPresent(student::setLocation);
+        return student;
     }
 ```
-测试结果如下：  
 
-```
--------第一种遍历方式：Iterator+递归--------
-student:name=张三,location=河南,age=18
-student:name=李四,location=新疆,age=26
-student:name=王五,location=北京,age=20
-teacher:name=zzs,location=河南,age=18
-teacher:name=zzf,location=新疆,age=26
-teacher:name=lt,location=北京,age=20
-```
-## 测试XPath获取指定节点
+## 使用XPath获取指定节点
+
+在读取 xml 时，我们很少通过遍历递归来获取我们所需的节点，更多的希望通过路径来直接找到节点，dom4j 通过 XPath 来提供支持（需要额外引入 jaxen 包）。
 
 ```java
-    @Test
-    public void test04() throws Exception {
-        // 创建指定文件的File对象
-        File file = new File("members.xml");
+    public static List<Student> getStudentFromXmlByXpath() throws Exception {
         // 创建SAXReader
-        SAXReader saxReader = new SAXReader();
-        // 将xml文件读入成document
-        Document document = saxReader.read(file);
-        // 使用xpath随机获取节点
-        List<Node> list = document.selectNodes("//members//students/student");
-        // List<Node> list = xmlParser.getDocument().selectSingleNode("students");
-        // 遍历节点
-        Iterator<Node> iterator = list.iterator();
-        while(iterator.hasNext()) {
-            Element element = (Element)iterator.next();
-            printAttr(element);
-        }
+        SAXReader saxReader = SAXReader.createDefault();
+        // 将xml解析为树
+        Document document = saxReader.read("xml/students.xml");
+        // 使用xpath随机获取节点(这里假设我不知道student节点在哪一级，或者哪几级)
+        List<Node> list = document.selectNodes("//student");
+        // 映射成学生对象
+        return list.stream()
+                .map(node -> mapElementToStudent((Element) node))
+                .collect(Collectors.toList());
     }
 ```
-测试结果如下：  
-```java
-student:age=18,location=河南,name=张三
-student:age=26,location=新疆,name=李四
-student:age=20,location=北京,name=王五
-```
-## XPath语法
-利用`XPath`获取指定节点，平时用的比较多，这里列举下基本语法。  
 
-表达式|结果
--|-
-/members|选取根节点下的所有members子节点
-//members|选取根节点下的所有members节点
-//students/student[1]|选取students下第一个student子节点
-//students/student[last()]|选取students下的最后一个student子节点
-//students/student[position()<3]|选取students下前两个student子节点
-//student[@age]|选取所有具有age属性的student节点
-//student[@age='18']|选取所有age属性为18的student节点
-//students/*|选取students下的所有节点
-//*|选取文档中所有节点
-//student[@*]|选取所有具有属性的节点
-//members/students\\|//members/teachers|选取members下的students子节点和teachers子节点
+这里再补充下 XPath 的基本语法。  
+
+| 表达式                             | 结果                                  |
+| ---------------------------------- | ------------------------------------- |
+| `/students`                        | 选取根节点下的所有students子节点      |
+| `//students`                       | 选取根节点下的所有students节点        |
+| `//students/student[1]`            | 选取students下第一个student子节点     |
+| `//students/student[last()]`       | 选取students下的最后一个student子节点 |
+| `//students/student[position()<3]` | 选取students下前两个student子节点     |
+| `//student[@age]`                  | 选取所有具有age属性的student节点      |
+| `//student[@age='18']`             | 选取所有age属性为18的student节点      |
+| `//students/*`                     | 选取students下的所有节点              |
+| `//*`                              | 选取文档中所有节点                    |
+| `//student[@*]`                    | 选取所有具有属性的节点                |
 
 # 源码分析 
 
-本文会先介绍`dom4j`如何将xml元素抽象成具体的对象，再去分析`dom4j`解析xml文件的过程（注意，阅读以下内容前需要了解和使用过JDK自带的`DOM`和`SAX`）。 
+本文会先介绍`dom4j`如何将 xml 元素抽象成具体的对象，再去分析`dom4j`读 xml 文件的过程（写的部分本文不扩展）。
+
+注意，阅读以下内容最好先了解 JAXP SAX。 
 
 ## dom4j节点的类结构
 
-先来看下一个完整xml的元素组成，可以看出，一个xml文件包含了`Document`、`Element`、`Comment`、`Attribute`、`DocumentType`、`Text`等等。 
+先来看下一个完整 xml 的节点组成。可以看出，一个 xml 文件包含了`Document`、`Element`、`Comment`、`Attribute`、`DocumentType`、`Text`等等。 
 
-![xml元素组成](https://img2018.cnblogs.com/blog/1731892/201911/1731892-20191123120233242-1363075546.png)
+<img src="https://img2018.cnblogs.com/blog/1731892/201911/1731892-20191123120233242-1363075546.png" alt="xml元素组成" style="zoom:67%;" />
 
+DOM 的思想就是将 xml 节点解析为具体的对象，并构建树形数据结构。基于此，`w3c`提供了 xml 元素的接口规范，`dom4j`基本借用了这套规范（如下图），只是改造了接口的方法，使得我们操作时更加简便。 
 
+<img src="https://img2018.cnblogs.com/blog/1731892/201911/1731892-20191123120357524-2028719224.png" alt="dom4j的节点接口继承图" style="zoom:67%;" />
 
-`DOM`的思想就是将xml元素解析为具体对象，并构建树形数据结构。基于此，`w3c`提供了xml元素的接口规范，`dom4j`基本借用了这套规范（如下图），只是改造了接口的方法，使得我们操作时更加简便。 
+## 如何读取xml的节点
 
-![dom4j的节点接口继承图](https://img2018.cnblogs.com/blog/1731892/201911/1731892-20191123120357524-2028719224.png)
+通过使用例子可知，我们解析xml文件的入口是`SAXReader`对象的`read`方法，入参可以是文件路径、url、字节流、字符流等，这些入参都会被包装成`InputSource`对象，最终调用`org.dom4j.io.SAXReader#read(org.xml.sax.InputSource)`方法。 
 
-
-
-## SAXReader.read(File file)
-
-通过使用例子可知，我们解析xml文件的入口是`SAXReader`对象的`read`方法，入参可以是文件路径、url、字节流、字符流等，这里以传入文件路径为例。 
-
-注意：考虑篇幅和可读性，以下代码经过删减，仅保留所需部分。 
-
-```java
-    public Document read(File file) throws DocumentException {
-        //不管是URI，path，character stream还是byte stream，都会包装成InputSource对象
-        InputSource source = new InputSource(new FileInputStream(file));
-        if (this.encoding != null) {
-            source.setEncoding(this.encoding);
-        }
-        
-        //下面这段代码是为了设置systemId，当传入URI且没有指定字符流和字节流时，可以通过systemId去连接URL并解析
-        //如果一开始传入了字符流或字节流，这个systemId就是可选的
-        String path = file.getAbsolutePath();
-        if (path != null) {
-            StringBuffer sb = new StringBuffer("file://");
-            if (!path.startsWith(File.separator)) {
-                sb.append("/");
-            }
-            path = path.replace('\\', '/');
-            sb.append(path);
-            source.setSystemId(sb.toString());
-        }
-
-        //这里调用重载方法解析InputSource对象
-        return read(source);
-    }
-```
-## SAXReader.read(InputSource in)
-
-看到这个方法的代码时，使用过JDK的`SAX`的朋友应该很熟悉，没错，`dom4j`也是采用事件处理的机制来解析xml。其实，只是这里设置的`SAXContentHandler`已经实现好了相关的方法，这些方法共同完成一件事情：构建xml树。明白这一点，应该就能理解`dom4j`是如何解决`SAX`和`DOM`的缺点了。 
+看到这个方法的代码时，使用过 JAXP SAX 的朋友应该很熟悉。没错，dom4j 直接调用了 JAXP SAX 的 API 来读取节点，一边读节点，一边构建 xml 树。这么看来，dom4j 认同 JAXP SAX，但不认同 JAXP DOM。
 
 注意：考虑篇幅和可读性，以下代码经过删减，仅保留所需部分。 
 
@@ -580,8 +232,6 @@ student:age=20,location=北京,name=王五
         // 这里会调用JAXP接口获取XMLReader实现类对象
         XMLReader reader = getXMLReader();
         reader = installXMLFilter(reader);
-        
-        // 下面这些操作，是不是和使用JDK的SAX差不多，dom4j也是使用了事件处理机制。
 
         // EntityResolver：通过实现resolveEntity方法，当解析xml需要引入外部数据源时触发，可以重定向到本地数据源或进行其他操作。
         EntityResolver thatEntityResolver = this.entityResolver;
@@ -593,8 +243,7 @@ student:age=20,location=北京,name=王五
         reader.setEntityResolver(thatEntityResolver);
         
         // 下面的SAXContentHandler继承了DefaultHandler，即实现了EntityResolver, DTDHandler, ContentHandler, ErrorHandler等接口
-        // 其中最重要的是ContentHandler接口，通过实现startDocument、endDocument、startElement、endElement等方法，当dom4j解析xml文件到指定元素类型时，可以触发我们自定义的方法。
-        // 当然，dom4j已经实现了ContentHandler的方法。具体实现的方法内容为：在解析xml时构建xml树
+        // 其中最重要的是ContentHandler接口，SAXContentHandler通过实现ContentHandler接口的startDocument、endDocument、startElement、endElement等方法来构建 xml 树。
         SAXContentHandler contentHandler = createContentHandler(reader);
         contentHandler.setEntityResolver(thatEntityResolver);
         contentHandler.setInputSource(in);
@@ -609,18 +258,17 @@ student:age=20,location=北京,name=王五
 
         configureReader(reader, contentHandler);
         
-        // 使用事件处理机制解析xml，处理过程会构建xml树
+        // 一边读取节点，一边构建树
         reader.parse(in);
-        // 返回构建好的xml树
         return contentHandler.getDocument();
     }
 ```
 
-## SAXContentHandler
+## 构建xml树
 
-通过上面的分析，可知`SAXContentHandler`是`dom4j`构建xml树的关键。这里看下它的几个重要方法和属性。 
+通过上面的代码，可以知道，构建 xml 树的逻辑在`SAXContentHandler`里。这里看下它的几个重要方法和属性。 
 
-### startDocument()
+### 树的开始和结束
 
 ```java
     // xml树
@@ -632,15 +280,14 @@ student:age=20,location=北京,name=王五
     // 节点处理器，可以看成节点开始解析或结束解析的标志
     private ElementHandler elementHandler;
     
-    // 当前解析节点(节点解析结束)、或当前解析节点的父节点（节点解析开始）
+    // 当前解析节点(节点解析结束)、或当前解析节点的父节点（节点解析开始），一般等于elementStack的栈顶元素
     private Element currentElement;
+
     public void startDocument() throws SAXException {
+        // 为构建xml树进行的初始化工作
         document = null;
         currentElement = null;
-        
-        // 清空节点栈
         elementStack.clear();
-        // 初始化节点处理器
         if ((elementHandler != null)
                 && (elementHandler instanceof DispatchHandler)) {
             elementStack.setDispatchHandler((DispatchHandler) elementHandler);
@@ -655,8 +302,17 @@ student:age=20,location=北京,name=王五
 
         textInTextBuffer = false;
     }
+    public void endDocument() throws SAXException {
+        // 构建完xml树后释放某些资源
+        namespaceStack.clear();
+        elementStack.clear();
+        currentElement = null;
+        textBuffer = null;
+    }
 ```
-### startElement(String,String,String,Attributes)
+### 节点的开始和结束
+
+可以看出，这个 xml 树是一棵多叉树。
 
 ```java
     public void startElement(String namespaceURI, String localName,
@@ -673,14 +329,14 @@ student:age=20,location=北京,name=王五
         if (branch == null) {
             branch = getDocument();
         }
-        // 创建当前解析节点
+        // 添加当前节点到currentElement作为子节点
         Element element = branch.addElement(qName);
         addDeclaredNamespaces(element);
 
-        // 添加节点属性
+        // 添加当前节点属性
         addAttributes(element, attributes);
         
-        //将当前节点压入节点栈
+        // 将当前节点压入节点栈
         elementStack.pushElement(element);
         currentElement = element;
         entity = null; // fixes bug527062
@@ -690,10 +346,7 @@ student:age=20,location=北京,name=王五
             elementHandler.onStart(elementStack);
         }
     }
-```
-### endElement(String, String, String)
 
-```java
     public void endElement(String namespaceURI, String localName, String qName)
             throws SAXException {
         if (mergeAdjacentText && textInTextBuffer) {
@@ -703,27 +356,68 @@ student:age=20,location=北京,name=王五
         if ((elementHandler != null) && (currentElement != null)) {
             elementHandler.onEnd(elementStack);
         }
-        // 当前解析节点从节点栈中弹出
+        // 当前节点从节点栈中弹出
         elementStack.popElement();
-        // 指定为栈顶节点
+        // 指定为栈顶节点，它是下一个要解析节点的父节点
         currentElement = elementStack.peekElement();
     }
 ```
-### endDocument()
-```java
-    public void endDocument() throws SAXException {
-        namespaceStack.clear();
-        // 清空节点栈
-        elementStack.clear();
-        currentElement = null;
-        textBuffer = null;
-    }
+
+以上，dom4j 的源码基本已经分析完，其他具体细节后续再做补充。 
+
+# 要不要使用dom4j
+
+为什么要讨论这样的问题呢？首先，你的项目选择使用哪种技术，不是一拍脑袋就能决定的，需要谨慎评估，不能大家都说好，你就直接拿去用。其次，你觉得某个技术已经够好了，可能是因为你不知道还有更好的选择。
+
+下面从易用性、性能、代码解耦等方面对比 dom4j 和  JAXP（实现用的是 JDK 默认的实现）。
+
+## 易用性
+
+在本项目中，也有使用 JAXP 直接操作节点来实现上述读写例子的代码（文末有源码链接），通过对比可以发现，dom4j 的 API 确实更加简洁，这一点不得不承认。
+
+注意，这里对比的是直接操作节点来实现读写，而不是使用 JAXB（用于处理 xml 文件和 java 对象的映射），如果用 JAXB 来处理本文中的例子，会更简单一些。
+
+## 性能
+
+再说说性能，我用 jmh 做了个测试（JDK 版本 1.8.0_231，dom4j 版本 2.1.3），**在读方面，JAXP DOM 稍快于 dom4j，在写方面，dom4j 更快**。
+
+```powershell
+# 写
+Benchmark                                                      Mode  Cnt       Score      Error   Units
+XMLWriteBenchmark.dom4jWrite                                   avgt    5     162.411 ±   22.892   us/op
+XMLWriteBenchmark.jaxpWrite                                    avgt    5     277.598 ±   51.781   us/op
+XMLWriteBenchmark.jaxpWriteByMarshaller                        avgt    5     349.465 ±   67.729   us/op
+# 读
+Benchmark                                                      Mode  Cnt       Score      Error   Units
+XMLReadBenchmark.jaxpSaxRead                                   avgt    5     157.919 ±    0.685   us/op
+XMLReadBenchmark.dom4jRead                                     avgt    5     223.989 ±    1.399   us/op
+XMLReadBenchmark.jaxpDomRead                                   avgt    5     205.436 ±    2.287   us/op
+XMLReadBenchmark.dom4jReadByXpath                              avgt    5     341.399 ±    1.666   us/op
+XMLReadBenchmark.jaxpReadByXpth                                avgt    5     309.582 ±    2.056   us/op
+XMLReadBenchmark.jaxpUnmarshallRead                            avgt    5     466.121 ±    5.761   us/op
 ```
-以上，dom4j的源码分析基本已经分析完，其他具体细节后续再做补充。 
 
-# 参考资料： 
+## 代码耦合
 
-[浅析SAX,DOM,JAXP,JDOM与DOM4J之间的关系](https://blog.csdn.net/xiongqi215/article/details/10125281)
+项目中我们经常遇到需要更换类库的问题，为了更少改动代码，我们的代码中往往只会使用到标准接口，而不会使用到具体实现，例如，使用 JDBC 来访问数据库。
+
+JAXP 就属于标准接口，并且 JDK 自带了一套实现。在项目中使用 dom4j，就好比在项目中直接调用 mysql-connector 的 API，这样做可能会简单一些，但是，哪天我需要更换 xml 类库时，需要修改大量的代码。
+
+## 我的建议
+
+所以，我的建议就是不要使用 dom4j，而是直接使用 JAXP。你会发现，更多的第三方类库使用的是 JAXP，例如，Spring、Mybatis、POI 等等。
+
+当然，如果你觉得以后不会更改 xml 类库，可以考虑使用 dom4j。
+
+以上，基本讲完 dom4j，不足的地方欢迎指正。
+
+最后，感谢阅读。
+
+# 参考资料 
+
+[dom4j官方文档](https://dom4j.github.io/)
+
+> 2021-05-10 更改
 
 > 相关源码请移步：https://github.com/ZhangZiSheng001/dom4j-demo
 
